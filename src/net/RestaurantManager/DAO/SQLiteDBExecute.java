@@ -2,7 +2,7 @@ package net.RestaurantManager.DAO;
 
 import java.sql.*;
 
-public class SQLiteDBExcute {
+public class SQLiteDBExecute {
     /**
      * Connect to a sample database
      */
