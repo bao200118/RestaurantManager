@@ -1,5 +1,7 @@
 package net.RestaurantManager.DTO;
 
+import java.util.Objects;
+
 /**
  * @author Pham Gia Bao
  * @version 1.0
@@ -234,5 +236,33 @@ public class WarehouseReceipt_DTO {
      */
     public void setStorekeeper(String storekeeper) {
         this.storekeeper = storekeeper;
+    }
+
+    /**
+     * Indicates whether some other object is "equal to" this one.
+     *
+     * @param o the reference object with which to compare.
+     * @return true if this object is the same as the dinner table obj argument; false otherwise.
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof WarehouseReceipt_DTO)) return false;
+        WarehouseReceipt_DTO that = (WarehouseReceipt_DTO) o;
+        return idIngredient == that.idIngredient && amount == that.amount && unitPrice == that.unitPrice &&
+                Objects.equals(nameIngredient, that.nameIngredient) && Objects.equals(calUnit, that.calUnit) &&
+                Objects.equals(importDate, that.importDate) && Objects.equals(supplier, that.supplier) &&
+                Objects.equals(storekeeper, that.storekeeper);
+    }
+
+    /**
+     * Returns a hash code value for the object.
+     * This method is supported for the benefit of hash tables such as those provided by HashMap.
+     *
+     * @return a hash code value for this object.
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, idIngredient, nameIngredient, calUnit, amount, unitPrice, importDate, supplier, storekeeper);
     }
 }
