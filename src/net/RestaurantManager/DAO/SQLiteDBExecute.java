@@ -21,9 +21,8 @@ public class SQLiteDBExecute {
             // create a connection to the database
             conn = DriverManager.getConnection(url);
 
-            System.out.println("Connection to SQLite has been established.");
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
 
         return conn;
@@ -38,7 +37,7 @@ public class SQLiteDBExecute {
         try {
             conn.close();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -52,16 +51,16 @@ public class SQLiteDBExecute {
      */
     public static ResultSet executeQuery(String sqlStatement, Connection conn, Object... parameter) {
         ResultSet data = null;
-        try {
-            PreparedStatement statement = conn.prepareStatement(sqlStatement);
+        try(PreparedStatement statement = conn.prepareStatement(sqlStatement)) {
+
 
             for (int i = 0; i < parameter.length; i++) {
                 fillPrepareStatement(statement, i + 1, parameter[i]);
             }
 
-            data = statement.executeQuery(sqlStatement);
+            data = statement.executeQuery();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
         return data;
     }
@@ -73,11 +72,10 @@ public class SQLiteDBExecute {
      */
     public static ResultSet executeQuery(String sqlStatement, Connection conn) {
         ResultSet data = null;
-        try {
-            PreparedStatement statement = conn.prepareStatement(sqlStatement);
-            data = statement.executeQuery(sqlStatement);
+        try(PreparedStatement statement = conn.prepareStatement(sqlStatement)) {
+            data = statement.executeQuery();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
         return data;
     }
@@ -91,17 +89,16 @@ public class SQLiteDBExecute {
      * @return A boolean representing success or fail of execute sql statement
      */
     public static boolean executeNonQuery(String sqlStatement, Connection conn, Object... parameter) {
-        try {
-            PreparedStatement statement = conn.prepareStatement(sqlStatement);
-
+        try(PreparedStatement statement = conn.prepareStatement(sqlStatement))
+        {
             for (int i = 0; i < parameter.length; i++) {
                 fillPrepareStatement(statement, i + 1, parameter[i]);
             }
 
-            statement.executeUpdate(sqlStatement);
+            statement.executeUpdate();
             return true;
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
         return false;
     }
@@ -112,12 +109,11 @@ public class SQLiteDBExecute {
      * @see SQLiteDBExecute#executeNonQuery(String, Connection, Object...)
      */
     public static boolean executeNonQuery(String sqlStatement, Connection conn) {
-        try {
-            PreparedStatement statement = conn.prepareStatement(sqlStatement);
-            statement.executeUpdate(sqlStatement);
+        try(PreparedStatement statement = conn.prepareStatement(sqlStatement)) {
+            statement.executeUpdate();
             return true;
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
         return false;
     }
