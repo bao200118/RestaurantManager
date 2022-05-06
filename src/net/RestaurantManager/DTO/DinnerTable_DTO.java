@@ -19,25 +19,38 @@ public class DinnerTable_DTO {
         this.status = "";
     }
 
+    /**
+     * Constructs a DinnerTable_DTO with name, status and with no id.
+     * @param name dinner table 's name
+     * @param status dinner table 's status
+     */
     public DinnerTable_DTO(String name, String status) {
         this.name = name;
         this.status = status;
     }
 
+    /**
+     * Constructs a DinnerTable_DTO with name, status and id.
+     * @param id dinner table 's id
+     * @param name dinner table 's name
+     * @param status dinner table 's status
+     */
     public DinnerTable_DTO(int id, String name, String status) {
         this.id = id;
         this.name = name;
         this.status = status;
     }
 
-    /** Gets the dinner table 's id.
+    /**
+     * Gets the dinner table 's id.
      * @return An int representing the dinner table 's id.
      */
     public int getId() {
         return id;
     }
 
-    /** Sets the dinner table 's id.
+    /**
+     * Sets the dinner table 's id.
      * @param id An int containing the
      *     dinner table 's id.
      */
@@ -45,7 +58,8 @@ public class DinnerTable_DTO {
         this.id = id;
     }
 
-    /** Gets the dinner table 's name.
+    /**
+     * Gets the dinner table 's name.
      * @return A String representing the dinner table 's name.
      */
     public String getName() {
@@ -60,14 +74,16 @@ public class DinnerTable_DTO {
         this.name = name;
     }
 
-    /** Gets the dinner table 's status.
+    /**
+     * Gets the dinner table 's status.
      * @return A String representing the dinner table 's status.
      */
     public String getStatus() {
         return status;
     }
 
-    /** Sets the dinner table 's status.
+    /**
+     * Sets the dinner table 's status.
      * @param status An int containing the
      *     dinner table 's status.
      */
@@ -75,6 +91,11 @@ public class DinnerTable_DTO {
         this.status = status;
     }
 
+    /**
+     * Indicates whether some other object is "equal to" this one.
+     * @param o the reference object with which to compare.
+     * @return true if this object is the same as the dinner table obj argument; false otherwise.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -83,6 +104,11 @@ public class DinnerTable_DTO {
         return name.equals(that.name) && status.equals(that.status);
     }
 
+    /**
+     * Returns a hash code value for the object.
+     * This method is supported for the benefit of hash tables such as those provided by HashMap.
+     * @return a hash code value for this object.
+     */
     @Override
     public int hashCode() {
         return Objects.hash(id, name, status);
