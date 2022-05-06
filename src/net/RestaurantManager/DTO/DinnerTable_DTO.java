@@ -21,7 +21,8 @@ public class DinnerTable_DTO {
 
     /**
      * Constructs a DinnerTable_DTO without id.
-     * @param name dinner table 's name
+     *
+     * @param name   dinner table 's name
      * @param status dinner table 's status
      */
     public DinnerTable_DTO(String name, String status) {
@@ -31,8 +32,9 @@ public class DinnerTable_DTO {
 
     /**
      * Constructs a DinnerTable_DTO with id.
-     * @param id dinner table 's id
-     * @param name dinner table 's name
+     *
+     * @param id     dinner table 's id
+     * @param name   dinner table 's name
      * @param status dinner table 's status
      */
     public DinnerTable_DTO(int id, String name, String status) {
@@ -43,6 +45,7 @@ public class DinnerTable_DTO {
 
     /**
      * Gets the dinner table 's id.
+     *
      * @return An int representing the dinner table 's id.
      */
     public int getId() {
@@ -51,8 +54,9 @@ public class DinnerTable_DTO {
 
     /**
      * Sets the dinner table 's id.
+     *
      * @param id An int containing the
-     *     dinner table 's id.
+     *           dinner table 's id.
      */
     public void setId(int id) {
         this.id = id;
@@ -60,15 +64,18 @@ public class DinnerTable_DTO {
 
     /**
      * Gets the dinner table 's name.
+     *
      * @return A String representing the dinner table 's name.
      */
     public String getName() {
         return name;
     }
 
-    /** Sets the dinner table 's name.
+    /**
+     * Sets the dinner table 's name.
+     *
      * @param name An int containing the
-     *     dinner table 's name.
+     *             dinner table 's name.
      */
     public void setName(String name) {
         this.name = name;
@@ -76,6 +83,7 @@ public class DinnerTable_DTO {
 
     /**
      * Gets the dinner table 's status.
+     *
      * @return A String representing the dinner table 's status.
      */
     public String getStatus() {
@@ -84,8 +92,9 @@ public class DinnerTable_DTO {
 
     /**
      * Sets the dinner table 's status.
+     *
      * @param status An int containing the
-     *     dinner table 's status.
+     *               dinner table 's status.
      */
     public void setStatus(String status) {
         this.status = status;
@@ -93,6 +102,7 @@ public class DinnerTable_DTO {
 
     /**
      * Indicates whether some other object is "equal to" this one.
+     *
      * @param o the reference object with which to compare.
      * @return true if this object is the same as the dinner table obj argument; false otherwise.
      */
@@ -107,6 +117,7 @@ public class DinnerTable_DTO {
     /**
      * Returns a hash code value for the object.
      * This method is supported for the benefit of hash tables such as those provided by HashMap.
+     *
      * @return a hash code value for this object.
      */
     @Override

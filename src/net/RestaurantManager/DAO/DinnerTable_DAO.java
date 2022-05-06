@@ -31,10 +31,10 @@ public class DinnerTable_DAO {
                         rs.getString("TrangThai"));
                 dinnerTables.add(dinnerTable);
             }
+            rs.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         SQLiteDBExecute.closeConnection(conn);
         return dinnerTables;
     }
@@ -58,6 +58,7 @@ public class DinnerTable_DAO {
                         rs.getString("TenBan"),
                         rs.getString("TrangThai"));
             }
+            rs.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -72,7 +73,7 @@ public class DinnerTable_DAO {
      * @param name dinner table name
      * @return A list of dinner table found
      */
-    public static ArrayList<DinnerTable_DTO> TimBanAn(String name) {
+    public static ArrayList<DinnerTable_DTO> findTables(String name) {
         ArrayList<DinnerTable_DTO> dinnerTables = new ArrayList<>();
 
         String sqlStatement = "Select * From BanAn where TenBan like CONCAT( '%',?,'%')";
@@ -87,6 +88,7 @@ public class DinnerTable_DAO {
                         rs.getString("TrangThai"));
                 dinnerTables.add(dinnerTable);
             }
+            rs.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
