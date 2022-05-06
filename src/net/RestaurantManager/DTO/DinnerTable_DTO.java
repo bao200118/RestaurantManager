@@ -20,7 +20,7 @@ public class DinnerTable_DTO {
     }
 
     /**
-     * Constructs a DinnerTable_DTO with name, status and with no id.
+     * Constructs a DinnerTable_DTO without id.
      * @param name dinner table 's name
      * @param status dinner table 's status
      */
@@ -30,7 +30,7 @@ public class DinnerTable_DTO {
     }
 
     /**
-     * Constructs a DinnerTable_DTO with name, status and id.
+     * Constructs a DinnerTable_DTO with id.
      * @param id dinner table 's id
      * @param name dinner table 's name
      * @param status dinner table 's status
