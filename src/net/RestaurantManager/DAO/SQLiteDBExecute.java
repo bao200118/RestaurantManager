@@ -51,8 +51,8 @@ public class SQLiteDBExecute {
      */
     public static ResultSet executeQuery(String sqlStatement, Connection conn, Object... parameter) {
         ResultSet data = null;
-        try {
-            PreparedStatement statement = conn.prepareStatement(sqlStatement);
+        try(PreparedStatement statement = conn.prepareStatement(sqlStatement)) {
+
 
             for (int i = 0; i < parameter.length; i++) {
                 fillPrepareStatement(statement, i + 1, parameter[i]);
@@ -72,8 +72,7 @@ public class SQLiteDBExecute {
      */
     public static ResultSet executeQuery(String sqlStatement, Connection conn) {
         ResultSet data = null;
-        try {
-            PreparedStatement statement = conn.prepareStatement(sqlStatement);
+        try(PreparedStatement statement = conn.prepareStatement(sqlStatement)) {
             data = statement.executeQuery();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -90,9 +89,8 @@ public class SQLiteDBExecute {
      * @return A boolean representing success or fail of execute sql statement
      */
     public static boolean executeNonQuery(String sqlStatement, Connection conn, Object... parameter) {
-        try {
-            PreparedStatement statement = conn.prepareStatement(sqlStatement);
-
+        try(PreparedStatement statement = conn.prepareStatement(sqlStatement))
+        {
             for (int i = 0; i < parameter.length; i++) {
                 fillPrepareStatement(statement, i + 1, parameter[i]);
             }
@@ -111,8 +109,7 @@ public class SQLiteDBExecute {
      * @see SQLiteDBExecute#executeNonQuery(String, Connection, Object...)
      */
     public static boolean executeNonQuery(String sqlStatement, Connection conn) {
-        try {
-            PreparedStatement statement = conn.prepareStatement(sqlStatement);
+        try(PreparedStatement statement = conn.prepareStatement(sqlStatement)) {
             statement.executeUpdate();
             return true;
         } catch (SQLException e) {
