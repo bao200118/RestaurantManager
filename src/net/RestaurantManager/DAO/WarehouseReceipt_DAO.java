@@ -20,8 +20,8 @@ public class WarehouseReceipt_DAO {
 
         String sqlStatement = "Select * from PhieuNhap";
 
-        conn = SQLiteDBExecute.connect();
-        ResultSet rs = SQLiteDBExecute.executeQuery(sqlStatement, conn);
+        conn = SQLiteDBExecutor.connect();
+        ResultSet rs = SQLiteDBExecutor.executeQuery(sqlStatement, conn);
 
         try {
             while (rs.next()) {
@@ -39,11 +39,12 @@ public class WarehouseReceipt_DAO {
                 warehouseReceipts.add(warehouseReceipt);
             }
             rs.close();
+            rs.getStatement().close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        SQLiteDBExecute.closeConnection(conn);
+        SQLiteDBExecutor.closeConnection(conn);
         return warehouseReceipts;
     }
 
@@ -55,9 +56,9 @@ public class WarehouseReceipt_DAO {
     public static boolean addWarehouseReceipt(WarehouseReceipt_DTO warehouseReceipt)
     {
         String sqlStatement = "Insert into PhieuNhap(MaNL,TenNL,DonVi,SoLuong,DonGia,NgayNhap,CungCap,ThuKho) values(?,?,?,?,?,?,?,)";
-        conn = SQLiteDBExecute.connect();
+        conn = SQLiteDBExecutor.connect();
 
-        boolean isSuccess = SQLiteDBExecute.executeNonQuery(sqlStatement, conn,
+        boolean isSuccess = SQLiteDBExecutor.executeNonQuery(sqlStatement, conn,
                 warehouseReceipt.getIdIngredient(),
                 warehouseReceipt.getNameIngredient(),
                 warehouseReceipt.getCalUnit(),
@@ -68,7 +69,7 @@ public class WarehouseReceipt_DAO {
                 warehouseReceipt.getStorekeeper()
                 );
 
-        SQLiteDBExecute.closeConnection(conn);
+        SQLiteDBExecutor.closeConnection(conn);
 
         return isSuccess;
     }
@@ -81,10 +82,10 @@ public class WarehouseReceipt_DAO {
     public static boolean deleteWarehouseReceipt(int id)
     {
         String sqlStatement = "Delete from PhieuNhap Where MaPN = ?";
-        conn = SQLiteDBExecute.connect();
+        conn = SQLiteDBExecutor.connect();
 
-        boolean isSuccess = SQLiteDBExecute.executeNonQuery(sqlStatement, conn, id);
-        SQLiteDBExecute.closeConnection(conn);
+        boolean isSuccess = SQLiteDBExecutor.executeNonQuery(sqlStatement, conn, id);
+        SQLiteDBExecutor.closeConnection(conn);
 
         return isSuccess;
     }

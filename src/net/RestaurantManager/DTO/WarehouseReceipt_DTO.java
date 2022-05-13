@@ -37,6 +37,8 @@ public class WarehouseReceipt_DTO {
      * @param importDate     import ingredient date
      * @param supplier       name of ingredient supplier
      * @param storekeeper    who save the warehouse receipt
+     * @see WarehouseReceipt_DTO#WarehouseReceipt_DTO(int, int, String, String, int, int, String, String, String)
+     * WarehouseReceipt_DTO
      */
     public WarehouseReceipt_DTO(int idIngredient, String nameIngredient, String calUnit, int amount,
                                 int unitPrice, String importDate, String supplier, String storekeeper) {

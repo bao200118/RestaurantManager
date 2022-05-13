@@ -6,7 +6,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 
 public class DinnerTable_DAO {
     static Connection conn;
@@ -21,8 +20,8 @@ public class DinnerTable_DAO {
         ArrayList<DinnerTable_DTO> dinnerTables = new ArrayList<>();
 
         String sqlStatement = "Select * From BanAn";
-        conn = SQLiteDBExecute.connect();
-        ResultSet rs = SQLiteDBExecute.executeQuery(sqlStatement, conn);
+        conn = SQLiteDBExecutor.connect();
+        ResultSet rs = SQLiteDBExecutor.executeQuery(sqlStatement, conn);
 
         try {
             while (rs.next()) {
@@ -32,10 +31,11 @@ public class DinnerTable_DAO {
                 dinnerTables.add(dinnerTable);
             }
             rs.close();
+            rs.getStatement().close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        SQLiteDBExecute.closeConnection(conn);
+        SQLiteDBExecutor.closeConnection(conn);
         return dinnerTables;
     }
 
@@ -49,9 +49,9 @@ public class DinnerTable_DAO {
         DinnerTable_DTO dinnerTable = null;
 
         String sqlStatement = "Select * from BanAn where TenBan = ?";
-        conn = SQLiteDBExecute.connect();
+        conn = SQLiteDBExecutor.connect();
 
-        ResultSet rs = SQLiteDBExecute.executeQuery(sqlStatement, conn, name);
+        ResultSet rs = SQLiteDBExecutor.executeQuery(sqlStatement, conn, name);
         try {
             if (rs.next()) {
                 dinnerTable = new DinnerTable_DTO(rs.getInt("ID"),
@@ -59,11 +59,12 @@ public class DinnerTable_DAO {
                         rs.getString("TrangThai"));
             }
             rs.close();
+            rs.getStatement().close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        SQLiteDBExecute.closeConnection(conn);
+        SQLiteDBExecutor.closeConnection(conn);
         return dinnerTable;
     }
 
@@ -78,8 +79,8 @@ public class DinnerTable_DAO {
 
         String sqlStatement = "Select * From BanAn where TenBan like CONCAT( '%',?,'%')";
 
-        conn = SQLiteDBExecute.connect();
-        ResultSet rs = SQLiteDBExecute.executeQuery(sqlStatement, conn, name);
+        conn = SQLiteDBExecutor.connect();
+        ResultSet rs = SQLiteDBExecutor.executeQuery(sqlStatement, conn, name);
 
         try {
             while (rs.next()) {
@@ -89,11 +90,12 @@ public class DinnerTable_DAO {
                 dinnerTables.add(dinnerTable);
             }
             rs.close();
+            rs.getStatement().close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        SQLiteDBExecute.closeConnection(conn);
+        SQLiteDBExecutor.closeConnection(conn);
         return dinnerTables;
     }
 
@@ -105,11 +107,11 @@ public class DinnerTable_DAO {
      */
     public static boolean setStatusOccupied(int id) {
         String sqlStatement = "Update BanAn Set TrangThai = 'Có Người' Where ID = ?";
-        conn = SQLiteDBExecute.connect();
+        conn = SQLiteDBExecutor.connect();
 
-        boolean isSuccess = SQLiteDBExecute.executeNonQuery(sqlStatement, conn, id);
+        boolean isSuccess = SQLiteDBExecutor.executeNonQuery(sqlStatement, conn, id);
 
-        SQLiteDBExecute.closeConnection(conn);
+        SQLiteDBExecutor.closeConnection(conn);
 
         return isSuccess;
     }
@@ -122,11 +124,11 @@ public class DinnerTable_DAO {
      */
     public static Boolean setStatusEmpty(int id) {
         String sqlStatement = "Update BanAn Set TrangThai = 'Trống' Where ID = ?";
-        conn = SQLiteDBExecute.connect();
+        conn = SQLiteDBExecutor.connect();
 
-        boolean isSuccess = SQLiteDBExecute.executeNonQuery(sqlStatement, conn, id);
+        boolean isSuccess = SQLiteDBExecutor.executeNonQuery(sqlStatement, conn, id);
 
-        SQLiteDBExecute.closeConnection(conn);
+        SQLiteDBExecutor.closeConnection(conn);
 
         return isSuccess;
     }
@@ -139,12 +141,12 @@ public class DinnerTable_DAO {
      */
     public static Boolean addTable(DinnerTable_DTO dinnerTable) {
         String sqlStatement = "insert into BanAn(TenBan,TrangThai) values(?,?)";
-        conn = SQLiteDBExecute.connect();
+        conn = SQLiteDBExecutor.connect();
 
-        boolean isSuccess = SQLiteDBExecute.executeNonQuery(sqlStatement, conn,
+        boolean isSuccess = SQLiteDBExecutor.executeNonQuery(sqlStatement, conn,
                 dinnerTable.getName(), dinnerTable.getStatus());
 
-        SQLiteDBExecute.closeConnection(conn);
+        SQLiteDBExecutor.closeConnection(conn);
 
         return isSuccess;
     }
@@ -157,29 +159,29 @@ public class DinnerTable_DAO {
      */
     public static Boolean updateTable(DinnerTable_DTO dinnerTable) {
         String sqlStatement = "Update BanAn Set TenBan = ? Where ID = ?";
-        conn = SQLiteDBExecute.connect();
+        conn = SQLiteDBExecutor.connect();
 
-        boolean isSuccess = SQLiteDBExecute.executeNonQuery(sqlStatement, conn,
+        boolean isSuccess = SQLiteDBExecutor.executeNonQuery(sqlStatement, conn,
                 dinnerTable.getName(), dinnerTable.getId());
 
-        SQLiteDBExecute.closeConnection(conn);
+        SQLiteDBExecutor.closeConnection(conn);
 
         return isSuccess;
     }
 
     /**
-     * Update table
+     * Delete table
      *
      * @param id dinner table id
      * @return A boolean representing success or fail
      */
     public static Boolean deleteTable(int id) {
         String sqlStatement = "Delete from BanAn Where ID = ?";
-        conn = SQLiteDBExecute.connect();
+        conn = SQLiteDBExecutor.connect();
 
-        boolean isSuccess = SQLiteDBExecute.executeNonQuery(sqlStatement, conn, id);
+        boolean isSuccess = SQLiteDBExecutor.executeNonQuery(sqlStatement, conn, id);
 
-        SQLiteDBExecute.closeConnection(conn);
+        SQLiteDBExecutor.closeConnection(conn);
 
         return isSuccess;
     }
