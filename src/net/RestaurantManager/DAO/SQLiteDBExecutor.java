@@ -1,13 +1,15 @@
 package net.RestaurantManager.DAO;
 
+import net.RestaurantManager.DAO.Constant;
+
 import java.sql.*;
 
 /**
  * @author bao20
- * @version 1.0
+ * @version 1.1
  * @since 1.0
  */
-public class SQLiteDBExecute {
+public class SQLiteDBExecutor {
     /**
      * Connect to database
      *
@@ -16,10 +18,9 @@ public class SQLiteDBExecute {
     public static Connection connect() {
         Connection conn = null;
         try {
-            // db parameters
-            String url = "jdbc:sqlite:db/NHAHANG.db";
+
             // create a connection to the database
-            conn = DriverManager.getConnection(url);
+            conn = DriverManager.getConnection(Constant.DB_URL);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -51,14 +52,14 @@ public class SQLiteDBExecute {
      */
     public static ResultSet executeQuery(String sqlStatement, Connection conn, Object... parameter) {
         ResultSet data = null;
-        try(PreparedStatement statement = conn.prepareStatement(sqlStatement)) {
-
+        try {
+            PreparedStatement statement = conn.prepareStatement(sqlStatement);
 
             for (int i = 0; i < parameter.length; i++) {
                 fillPrepareStatement(statement, i + 1, parameter[i]);
             }
-
             data = statement.executeQuery();
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -68,15 +69,18 @@ public class SQLiteDBExecute {
     /**
      * Execute query to database with no parameter
      *
-     * @see SQLiteDBExecute#executeQuery(String, Connection, Object...)
+     * @see SQLiteDBExecutor#executeQuery(String, Connection, Object...)
      */
     public static ResultSet executeQuery(String sqlStatement, Connection conn) {
         ResultSet data = null;
-        try(PreparedStatement statement = conn.prepareStatement(sqlStatement)) {
+        try {
+            PreparedStatement statement = conn.prepareStatement(sqlStatement);
             data = statement.executeQuery();
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         return data;
     }
 
@@ -89,13 +93,13 @@ public class SQLiteDBExecute {
      * @return A boolean representing success or fail of execute sql statement
      */
     public static boolean executeNonQuery(String sqlStatement, Connection conn, Object... parameter) {
-        try(PreparedStatement statement = conn.prepareStatement(sqlStatement))
-        {
+        try {
+            PreparedStatement statement = conn.prepareStatement(sqlStatement);
             for (int i = 0; i < parameter.length; i++) {
                 fillPrepareStatement(statement, i + 1, parameter[i]);
             }
-
             statement.executeUpdate();
+            statement.close();
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -106,11 +110,13 @@ public class SQLiteDBExecute {
     /**
      * Execute non query to database with no parameter
      *
-     * @see SQLiteDBExecute#executeNonQuery(String, Connection, Object...)
+     * @see SQLiteDBExecutor#executeNonQuery(String, Connection, Object...)
      */
     public static boolean executeNonQuery(String sqlStatement, Connection conn) {
-        try(PreparedStatement statement = conn.prepareStatement(sqlStatement)) {
+        try {
+            PreparedStatement statement = conn.prepareStatement(sqlStatement);
             statement.executeUpdate();
+            statement.close();
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -134,3 +140,4 @@ public class SQLiteDBExecute {
         else if (String.class.equals(parameter.getClass())) preparedStatement.setString(index, (String) parameter);
     }
 }
+

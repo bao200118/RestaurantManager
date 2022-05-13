@@ -24,6 +24,7 @@ public class DinnerTable_DTO {
      *
      * @param name   dinner table 's name
      * @param status dinner table 's status
+     * @see DinnerTable_DTO#DinnerTable_DTO(int, String, String)  DinnerTable_DTO
      */
     public DinnerTable_DTO(String name, String status) {
         this.name = name;
