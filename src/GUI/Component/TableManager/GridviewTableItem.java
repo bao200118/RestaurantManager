@@ -1,6 +1,6 @@
     package GUI.Component.TableManager;
 
-import DTO.TableModel;
+import DTO.TableModelItem;
 import GUI.Component.RoundedButton;
 import GUI.Component.TableManager.FoodCard.FoodCard;
 import java.awt.BorderLayout;
@@ -27,7 +27,7 @@ import javax.swing.ScrollPaneConstants;
 
 public class GridviewTableItem extends JPanel{
     private final Dimension dimension;
-    List<TableModel> tables = new ArrayList<>();
+    List<TableModelItem> tables = new ArrayList<>();
 
     public GridviewTableItem(Dimension dimension) {
         this.dimension = dimension;
@@ -194,34 +194,34 @@ public class GridviewTableItem extends JPanel{
        
        bodyLayout.setOpaque(false);
        
-       tables.add(new TableModel(1, "Bàn 1", "Chưa mở"));
-       tables.add(new TableModel(2, "Bàn 2", "Chưa mở"));
-       tables.add(new TableModel(3, "Bàn 3", "Chưa mở"));
-       tables.add(new TableModel(2, "Bàn 4", "Chưa mở"));
-       tables.add(new TableModel(3, "Bàn 5", "Chưa mở"));
-       tables.add(new TableModel(2, "Bàn 6", "Chưa mở"));
-       tables.add(new TableModel(3, "Bàn 7", "Chưa mở"));
-       tables.add(new TableModel(1, "Bàn 8", "Chưa mở"));
-       tables.add(new TableModel(2, "Bàn 9", "Chưa mở"));
-       tables.add(new TableModel(3, "Bàn 10", "Chưa mở"));
-       tables.add(new TableModel(2, "Bàn 11", "Chưa mở"));
-       tables.add(new TableModel(3, "Bàn 12", "Chưa mở"));
-       tables.add(new TableModel(2, "Bàn 13", "Chưa mở"));
-       tables.add(new TableModel(3, "Bàn 14", "Chưa mở"));
-       tables.add(new TableModel(2, "Bàn 15", "Chưa mở"));
-       tables.add(new TableModel(3, "Bàn 16", "Chưa mở"));
-       tables.add(new TableModel(2, "Bàn 17", "Chưa mở"));
-       tables.add(new TableModel(3, "Bàn 18", "Chưa mở"));
-       tables.add(new TableModel(2, "Bàn 19", "Chưa mở"));
-       tables.add(new TableModel(3, "Bàn 20", "Chưa mở"));
-       tables.add(new TableModel(2, "Bàn 21", "Chưa mở"));
-       tables.add(new TableModel(3, "Bàn 22", "Chưa mở"));
-       tables.add(new TableModel(2, "Bàn 23", "Chưa mở"));
-       tables.add(new TableModel(3, "Bàn 24", "Chưa mở"));
-       tables.add(new TableModel(2, "Bàn 25", "Chưa mở"));
-       tables.add(new TableModel(3, "Bàn 26", "Chưa mở"));
-       tables.add(new TableModel(2, "Bàn 27", "Chưa mở"));
-       tables.add(new TableModel(3, "Bàn 28", "Chưa mở"));
+       tables.add(new TableModelItem(1, "Bàn 1", "Chưa mở"));
+       tables.add(new TableModelItem(2, "Bàn 2", "Chưa mở"));
+       tables.add(new TableModelItem(3, "Bàn 3", "Chưa mở"));
+       tables.add(new TableModelItem(2, "Bàn 4", "Chưa mở"));
+       tables.add(new TableModelItem(3, "Bàn 5", "Chưa mở"));
+       tables.add(new TableModelItem(2, "Bàn 6", "Chưa mở"));
+       tables.add(new TableModelItem(3, "Bàn 7", "Chưa mở"));
+       tables.add(new TableModelItem(1, "Bàn 8", "Chưa mở"));
+       tables.add(new TableModelItem(2, "Bàn 9", "Chưa mở"));
+       tables.add(new TableModelItem(3, "Bàn 10", "Chưa mở"));
+       tables.add(new TableModelItem(2, "Bàn 11", "Chưa mở"));
+       tables.add(new TableModelItem(3, "Bàn 12", "Chưa mở"));
+       tables.add(new TableModelItem(2, "Bàn 13", "Chưa mở"));
+       tables.add(new TableModelItem(3, "Bàn 14", "Chưa mở"));
+       tables.add(new TableModelItem(2, "Bàn 15", "Chưa mở"));
+       tables.add(new TableModelItem(3, "Bàn 16", "Chưa mở"));
+       tables.add(new TableModelItem(2, "Bàn 17", "Chưa mở"));
+       tables.add(new TableModelItem(3, "Bàn 18", "Chưa mở"));
+       tables.add(new TableModelItem(2, "Bàn 19", "Chưa mở"));
+       tables.add(new TableModelItem(3, "Bàn 20", "Chưa mở"));
+       tables.add(new TableModelItem(2, "Bàn 21", "Chưa mở"));
+       tables.add(new TableModelItem(3, "Bàn 22", "Chưa mở"));
+       tables.add(new TableModelItem(2, "Bàn 23", "Chưa mở"));
+       tables.add(new TableModelItem(3, "Bàn 24", "Chưa mở"));
+       tables.add(new TableModelItem(2, "Bàn 25", "Chưa mở"));
+       tables.add(new TableModelItem(3, "Bàn 26", "Chưa mở"));
+       tables.add(new TableModelItem(2, "Bàn 27", "Chưa mở"));
+       tables.add(new TableModelItem(3, "Bàn 28", "Chưa mở"));
        
        for (int i = 0; i <= tables.size() - 1; i++) {
            TableItem tableItem = new TableItem(new ImageIcon(getClass().getResource("/assets/ic_tableware.png")), tables.get(i).getName());
@@ -325,7 +325,7 @@ public class GridviewTableItem extends JPanel{
         btnBack.setVisible(false);
     }
             
-    private int getNumberRowTableMap(List<TableModel> tables) {
+    private int getNumberRowTableMap(List<TableModelItem> tables) {
         if (tables.size() % 5 == 0) {
             return tables.size() / 5;
         }
