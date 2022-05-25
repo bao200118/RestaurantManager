@@ -29,16 +29,6 @@ public class FoodManagerLayout extends JPanel{
         
     }
       
-//    @Override
-//    protected void paintComponent(Graphics graphics) {
-//        Graphics2D g2 = (Graphics2D) graphics;
-//        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-//        GradientPaint gradientPaint = new GradientPaint(0, 0, Color.decode("#6190E8"), 0, getHeight(), Color.decode("#A7BFE8"));
-//        g2.setPaint(gradientPaint);
-//        g2.fillRoundRect(0, 0, getWidth(), getHeight(), 20, 20);
-//        super.paintComponent(graphics); 
-//    }
-    
     public void show(Component com) {
         removeAll();
         add(com);

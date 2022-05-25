@@ -1,5 +1,6 @@
 package GUI.Component.FoodManager;
 
+import BUS.FoodGroup_BUS;
 import GUI.Component.RoundedButton;
 import GUI.Component.RoundedTextField;
 import java.awt.BorderLayout;
@@ -61,7 +62,9 @@ public class FoodInfoListLayout extends JPanel{
         btnDeleteFood = new RoundedButton();
         tfFilterFoodName = new RoundedTextField();
         cbFilterFoodGroup = new JComboBox<>();   
-        tbFoodInfoList = new JTable(foods, properties);
+        tbFoodInfoList = new JTable(foods, properties);        
+        dcbmFoodGroupModel = new DefaultComboBoxModel();
+        FoodGroup_BUS.getAllFoodGroupNames(dcbmFoodGroupModel);
         
         JPanel infoLayout = new JPanel();
         infoLayout.setPreferredSize(new Dimension(width, (int) (height / 2)));
@@ -102,7 +105,7 @@ public class FoodInfoListLayout extends JPanel{
         gbc.insets = new Insets(0, 0, 30, 80);
         gbc.anchor = GridBagConstraints.WEST;
 
-        cbFoodGroup.setModel(new DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cbFoodGroup.setModel(dcbmFoodGroupModel);
         cbFoodGroup.setFocusable(false);
         cbFoodGroup.setPreferredSize(new Dimension((int) (width / 3.5) , 35));
         cbFoodGroup.setFont(new java.awt.Font("sansserif", 0, 14));
@@ -484,5 +487,6 @@ public class FoodInfoListLayout extends JPanel{
     private GUI.Component.RoundedTextField tfFilterFoodName;
     private javax.swing.JComboBox<String> cbFilterFoodGroup;
     private javax.swing.JTable tbFoodInfoList;
+    private javax.swing.DefaultComboBoxModel dcbmFoodGroupModel;
     // nd of variables declaration 
 }

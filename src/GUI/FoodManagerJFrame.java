@@ -35,6 +35,7 @@ public class FoodManagerJFrame extends JPanel{
         add(navigationLayout, BorderLayout.NORTH);
         add(foodManagerLayout, BorderLayout.SOUTH); 
         navigationLayout.addEventTabSelected((var index) -> {
+            
             switch (index) {
                 case 0 -> foodManagerLayout.show(foodInfoLayout);
                 case 1 -> foodManagerLayout.show(foodGroupLayout);
@@ -42,6 +43,7 @@ public class FoodManagerJFrame extends JPanel{
                 default -> throw new AssertionError();
             }
         });
+        
     }
     
     // Variables declaration - do not modify     
