@@ -1,7 +1,9 @@
 package GUI.Component.FoodManager;
 
+import BUS.FoodGroup_BUS;
 import GUI.Component.RoundedButton;
 import GUI.Component.RoundedTextField;
+import Interface.EventTextChange;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -18,19 +20,19 @@ import java.awt.event.ActionEvent;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.table.DefaultTableModel;
 
 public class FoodGroupLayout extends JPanel{
     private final Dimension dimension;
     
-    String[][] foodGroups = {
-        { "G001", "Nước ngọt" },
-        { "G002", "Tráng miệng" }
-    };
     String[] properties = { "Mã nhóm món ", "Tên nhóm món"};
 
 
@@ -52,7 +54,19 @@ public class FoodGroupLayout extends JPanel{
        btnAddFoodGroup = new RoundedButton();
        btnUpdateFoodGroup = new RoundedButton();
        btnDeleteFoodGroup = new RoundedButton();
-       tbFoodGroup = new JTable(foodGroups, properties);
+       dtmTableModel = new DefaultTableModel(properties, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                //all cells false
+                return false;
+            }
+        };
+        tbFoodGroup = new JTable(dtmTableModel);
+        tbFoodGroup.getSelectionModel().addListSelectionListener((e) -> {
+            rowSelectedListener(e);
+        });
+
+        FoodGroup_BUS.getAllFoodGroups(dtmTableModel);
        
         /**
          * info Staff Form Layout
@@ -85,7 +99,7 @@ public class FoodGroupLayout extends JPanel{
         lbTextFoodGroupID.setForeground(Color.BLACK);
         infoFoodGroupFormLayout.add(lbTextFoodGroupID, gbc);
               
-        // textfield tên món ăn
+        // textfield mã nhóm
         gbc.gridx = 1;
         gbc.gridy = 0;
         gbc.insets = new Insets(0, 0, 30, 0);
@@ -97,13 +111,15 @@ public class FoodGroupLayout extends JPanel{
         tfFoodGroupID.setMargin(new java.awt.Insets(2, 10, 2, 6));
         tfFoodGroupID.setRound(20);
         tfFoodGroupID.setPreferredSize(new Dimension((int) (foodGroupWidth / 3.5) , 35));
+        tfFoodGroupID.setBackground(new Color(225, 229, 235));
+        tfFoodGroupID.setEditable(false);
         
         infoFoodGroupFormLayout.add(tfFoodGroupID, gbc);
         
-        // label Mã nhóm
+        // label tên nhóm
         gbc.gridx = 0;
         gbc.gridy = 1;      
-        gbc.insets = new Insets(0, 0, 35, 20);
+        gbc.insets = new Insets(0, 0, 0, 20);
         gbc.anchor = GridBagConstraints.EAST;
         
         JLabel lbTextFoodGroupName = new JLabel("Tên nhóm");
@@ -111,7 +127,7 @@ public class FoodGroupLayout extends JPanel{
         lbTextFoodGroupName.setForeground(Color.BLACK);
         infoFoodGroupFormLayout.add(lbTextFoodGroupName, gbc);
               
-        // textfield tên món ăn
+        // textfield tên nhóm
         gbc.gridx = 1;
         gbc.gridy = 1;
         gbc.insets = new Insets(0, 0, 0, 0);
@@ -157,6 +173,11 @@ public class FoodGroupLayout extends JPanel{
         tfSearch.setMargin(new java.awt.Insets(2, 10, 2, 6));
         tfSearch.setRound(20);
         tfSearch.setPreferredSize(new Dimension((int) (foodGroupWidth / 3.5) , 35));
+        
+        tfSearch.getDocument().addDocumentListener((EventTextChange) (DocumentEvent evt) -> {
+            tfSearchTextChangeActionPerformed(evt);
+        });
+
         
         businessLayout.add(tfSearch, gbcBusiness);
         
@@ -283,17 +304,48 @@ public class FoodGroupLayout extends JPanel{
         add(tableLayout);
     }
     
+    private final int FOOD_GROUP_ID_ROW = 0;
+    private final int FOOD_GROUP_NAME_ROW = 1;
+    
+     private void rowSelectedListener(ListSelectionEvent event) {
+        if (!event.getValueIsAdjusting()) {
+            int selectedRow = tbFoodGroup.getSelectedRow();
+            if (selectedRow != -1) {
+                tfFoodGroupID.setText(tbFoodGroup.getValueAt(selectedRow, FOOD_GROUP_ID_ROW).toString());
+                tfFoodGroupName.setText(tbFoodGroup.getValueAt(selectedRow, FOOD_GROUP_NAME_ROW).toString());
+            }
+        }
+    }
+    
     private void btnAddFoodGroupActionPerformed(ActionEvent evt) {  
-
+        FoodGroup_BUS.addFoodGroup(tfFoodGroupName.getText());
+        FoodGroup_BUS.getAllFoodGroups((DefaultTableModel) tbFoodGroup.getModel());
     } 
     
     private void btnUpdateFoodGroupActionPerformed(ActionEvent evt) {  
-
+        try {
+            FoodGroup_BUS.updateFoodGroup(Integer.parseInt(tfFoodGroupID.getText()), tfFoodGroupName.getText());
+            FoodGroup_BUS.getAllFoodGroups((DefaultTableModel) tbFoodGroup.getModel());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn nhóm món ăn cần cập nhật", "Cập nhật nhóm món ăn",
+                    JOptionPane.WARNING_MESSAGE);
+        }    
     } 
     
-    private void btnDeleteFoodGroupActionPerformed(ActionEvent evt) {  
-
+    private void btnDeleteFoodGroupActionPerformed(ActionEvent evt) { 
+        try {
+            FoodGroup_BUS.deleteFoodGroup(Integer.parseInt(tfFoodGroupID.getText()));
+            FoodGroup_BUS.getAllFoodGroups((DefaultTableModel) tbFoodGroup.getModel());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn nhóm món ăn cần xoá", "Xoá nhóm món ăn",
+                    JOptionPane.WARNING_MESSAGE);
+        }    
+        
     } 
+    
+    private void tfSearchTextChangeActionPerformed(DocumentEvent evt) {
+        FoodGroup_BUS.findFoodGroups((DefaultTableModel) tbFoodGroup.getModel(), tfSearch.getText());
+    }
     
     // Variables declaration - do not modify 
     private GUI.Component.RoundedTextField tfFoodGroupID;    
@@ -303,5 +355,6 @@ public class FoodGroupLayout extends JPanel{
     private GUI.Component.RoundedButton btnUpdateFoodGroup;
     private GUI.Component.RoundedButton btnDeleteFoodGroup;
     private javax.swing.JTable tbFoodGroup;
+    private javax.swing.table.DefaultTableModel dtmTableModel;
     // nd of variables declaration 
 }

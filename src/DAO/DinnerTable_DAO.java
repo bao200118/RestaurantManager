@@ -108,7 +108,7 @@ public class DinnerTable_DAO {
      * Set status of table to occupied
      *
      * @param id dinner table id
-     * @return A boolean representing success or fail
+     * @return A Boolean representing success or fail
      */
     public static boolean setStatusOccupied(int id) {
         String sqlStatement = "Update BanAn Set TrangThai = 'Có Người' Where ID = ?";
@@ -125,7 +125,7 @@ public class DinnerTable_DAO {
      * Set status of table to empty
      *
      * @param id dinner table id
-     * @return A boolean representing success or fail
+     * @return A Boolean representing success or fail
      */
     public static Boolean setStatusEmpty(int id) {
         String sqlStatement = "Update BanAn Set TrangThai = 'Trống' Where ID = ?";
@@ -179,7 +179,7 @@ public class DinnerTable_DAO {
      * Delete table
      *
      * @param id dinner table id
-     * @return A boolean representing success or fail
+     * @return A Boolean representing success or fail
      */
     public static Boolean deleteTable(int id) {
         String sqlStatement = "Delete from BanAn Where ID = ?";

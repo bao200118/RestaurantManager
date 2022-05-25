@@ -42,6 +42,7 @@ public class DinnerTable_BUS {
     }
 
     public static void updateTableInfo(int dinnerTableId, String dinnerTableName) {
+        
         DinnerTable_DTO dinnerTableCheckDTO = DinnerTable_DAO.getDinnerTable(dinnerTableName);
 
         if (dinnerTableCheckDTO == null) {
