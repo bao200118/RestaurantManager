@@ -82,10 +82,10 @@ public class DinnerTable_DAO {
     public static ArrayList<DinnerTable_DTO> findTables(String name) {
         ArrayList<DinnerTable_DTO> dinnerTables = new ArrayList<>();
 
-        String sqlStatement = "Select * From BanAn where TenBan like CONCAT( '%',?,'%')";
+        String sqlStatement = "Select * From BanAn where TenBan like '%" +name+ "%'";
 
         conn = SQLiteDBExecutor.connect();
-        ResultSet rs = SQLiteDBExecutor.executeQuery(sqlStatement, conn, name);
+        ResultSet rs = SQLiteDBExecutor.executeQuery(sqlStatement, conn);
 
         try {
             while (rs.next()) {

@@ -74,4 +74,13 @@ public class DinnerTable_BUS {
             System.err.println("No");
         }
     }
+    
+    public static void findTableInfos(DefaultTableModel tableModel, String name) {
+        tableModel.setRowCount(0);
+        ArrayList<DinnerTable_DTO> dinnerTableList = DinnerTable_DAO.findTables(name);
+        for (DinnerTable_DTO dinnerTable : dinnerTableList) {
+            tableModel.addRow(new Object[]{dinnerTable.getId(),
+                dinnerTable.getName(), dinnerTable.getStatus()});
+        }
+    }
 }

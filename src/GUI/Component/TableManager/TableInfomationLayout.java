@@ -3,6 +3,7 @@ package GUI.Component.TableManager;
 import BUS.DinnerTable_BUS;
 import GUI.Component.RoundedButton;
 import GUI.Component.RoundedTextField;
+import Interface.EventTextChange;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -25,6 +26,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.DocumentEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.DefaultTableModel;
 
@@ -216,6 +218,10 @@ public class TableInfomationLayout extends JPanel {
         tfSearch.setMargin(new java.awt.Insets(2, 10, 2, 6));
         tfSearch.setRound(20);
         tfSearch.setPreferredSize(new Dimension((int) (tableInfoWidth / 3.5), 35));
+        
+        tfSearch.getDocument().addDocumentListener((EventTextChange) (DocumentEvent evt) -> {
+            tfSearchTextChangeActionPerformed(evt);
+        });
 
         businessLayout.add(tfSearch, gbcBusiness);
 
@@ -365,6 +371,10 @@ public class TableInfomationLayout extends JPanel {
     private void btnDeleteTableGroupActionPerformed(ActionEvent evt) {
         DinnerTable_BUS.deleteTableInfo(Integer.parseInt(tfTableID.getText()));
         DinnerTable_BUS.getAllTableInfo((DefaultTableModel) tbTable.getModel());
+    }
+    
+    private void tfSearchTextChangeActionPerformed(DocumentEvent evt) {
+        DinnerTable_BUS.findTableInfos((DefaultTableModel) tbTable.getModel(), tfSearch.getText());
     }
 
     // Variables declaration - do not modify 
