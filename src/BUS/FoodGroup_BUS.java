@@ -1,24 +1,32 @@
 
 package BUS;
 
-import DAO.DinnerTable_DAO;
 import DAO.FoodGroup_DAO;
-import DTO.DinnerTable_DTO;
 import DTO.FoodGroup_DTO;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.DefaultComboBoxModel;
 
 /**
  *
  * @author Phạm Văn Chánh
  */
 public class FoodGroup_BUS {
+    
     public static void getAllFoodGroups(DefaultTableModel tableModel) {
         tableModel.setRowCount(0);
         ArrayList<FoodGroup_DTO> foodGroupList = FoodGroup_DAO.getAllFoodGroups();
         for (FoodGroup_DTO foodGroup : foodGroupList) {
             tableModel.addRow(new Object[]{foodGroup.getId(), foodGroup.getName()});
+        }
+    }
+    
+    public static void getAllFoodGroupNames(DefaultComboBoxModel cbModel) {
+       
+        ArrayList<FoodGroup_DTO> foodGroupList = FoodGroup_DAO.getAllFoodGroups();
+        for (FoodGroup_DTO foodGroup : foodGroupList) {
+            cbModel.addElement(foodGroup.getName());
         }
     }
     
