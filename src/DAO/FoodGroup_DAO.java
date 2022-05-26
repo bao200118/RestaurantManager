@@ -72,9 +72,37 @@ public class FoodGroup_DAO {
         SQLiteDBExecutor.closeConnection(conn);
         return foodGroup;
     }
+    
+    /**
+     * Get a food group according to food group id
+     *
+     * @param id food group id
+     * @return A food record representing food group 's id
+     */
+    public static FoodGroup_DTO getFoodGroupById(int id) {
+        FoodGroup_DTO foodGroup = null;
+
+        String sqlStatement = "Select * from NhomMon where MaNhom = ?";
+        conn = SQLiteDBExecutor.connect();
+
+        ResultSet rs = SQLiteDBExecutor.executeQuery(sqlStatement, conn, id);
+        try {
+            if (rs.next()) {
+                foodGroup = new FoodGroup_DTO(rs.getInt("MaNhom"),
+                        rs.getString("TenNhom"));
+            }
+            rs.close();
+            rs.getStatement().close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        SQLiteDBExecutor.closeConnection(conn);
+        return foodGroup;
+    }
 
     /**
-     * Find tables
+     * Find food groups
      *
      * @param name food group name
      * @return A list of food group found

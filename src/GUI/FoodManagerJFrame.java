@@ -7,18 +7,19 @@ import GUI.Component.FoodManager.NavigationLayout;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.io.IOException;
 import javax.swing.JPanel;
 
 public class FoodManagerJFrame extends JPanel{
     private final Dimension dimension;
 
-    public FoodManagerJFrame(Dimension dimension) {
+    public FoodManagerJFrame(Dimension dimension) throws IOException {
         this.dimension = dimension;
         initComponents();
         setOpaque(false);
     }
     
-    private void initComponents() {
+    private void initComponents() throws IOException {
         int bodyWidth = dimension.width;
         int bodyHeight = dimension.height;
         

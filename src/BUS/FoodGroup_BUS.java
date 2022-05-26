@@ -25,15 +25,24 @@ public class FoodGroup_BUS {
     public static void getAllFoodGroupNames(DefaultComboBoxModel cbModel) {
        
         ArrayList<FoodGroup_DTO> foodGroupList = FoodGroup_DAO.getAllFoodGroups();
+        cbModel.addElement("Tất cả");
         for (FoodGroup_DTO foodGroup : foodGroupList) {
             cbModel.addElement(foodGroup.getName());
         }
     }
     
+    public static FoodGroup_DTO getFoodGroupByName(String foodGroupName) {
+        return FoodGroup_DAO.getFoodGroupByName(foodGroupName);
+    }
+    
+    public static FoodGroup_DTO getFoodGroupById(int foodGroupId) {
+        return FoodGroup_DAO.getFoodGroupById(foodGroupId);
+    }
+    
     public static void addFoodGroup(String foodGroupName) {
         
         if (!"".equals(foodGroupName)) {
-            FoodGroup_DTO foodGroupCheckDTO = FoodGroup_DAO.getFoodGroupByName(foodGroupName);
+            FoodGroup_DTO foodGroupCheckDTO = getFoodGroupByName(foodGroupName);
             if (foodGroupCheckDTO == null) {
                 if (FoodGroup_DAO.addFoodGroup(foodGroupName)) {
                     JOptionPane.showMessageDialog(null, "Thao tác thành công", "Thêm nhóm món ăn",
@@ -55,7 +64,7 @@ public class FoodGroup_BUS {
     
     public static void updateFoodGroup(int foodGroupId, String foodGroupName) {
         
-        FoodGroup_DTO foodGroupCheckDTO = FoodGroup_DAO.getFoodGroupByName(foodGroupName);
+        FoodGroup_DTO foodGroupCheckDTO = getFoodGroupByName(foodGroupName);
 
         if (foodGroupCheckDTO == null) {
             if (FoodGroup_DAO.updateFoodGroup(foodGroupId, foodGroupName)) {

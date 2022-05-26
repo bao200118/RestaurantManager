@@ -1,8 +1,12 @@
 package GUI.Component.FoodManager;
 
 import BUS.FoodGroup_BUS;
+import BUS.Food_BUS;
+import DTO.Food_DTO;
+import Utils.ImageUtils;
 import GUI.Component.RoundedButton;
 import GUI.Component.RoundedTextField;
+import Interface.EventTextChange;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -16,41 +20,50 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.ListSelectionEvent;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.DefaultTableModel;
 
 public class FoodInfoListLayout extends JPanel{
     private final Dimension dimension;
-    String[][] foods = {
-        { "001", "Hải sản", "Lẩu chay", "Nồi", "120000", "" },
-        { "002", "Lẩu", "Cá chiên bột", "Đĩa", "200000", "" }
-    };
     String[] properties = { "ID", "Tên nhóm món", "Tên món", "Đơn vị tính", "Giá", "Ảnh"};
 
 
-    public FoodInfoListLayout(Dimension dimension) {
+    public FoodInfoListLayout(Dimension dimension) throws IOException {
         this.dimension = dimension;
         initComponents();
         setOpaque(false);
     }
     
-    private void initComponents() {
+    private void initComponents() throws IOException {
         int width = dimension.width;
         int height = dimension.height - dimension.height / 22 - 10;
        
+        // object initialization
         cbFoodGroup = new JComboBox<>();
         tfFoodName = new RoundedTextField();
         tfUnit = new RoundedTextField();
@@ -61,14 +74,37 @@ public class FoodInfoListLayout extends JPanel{
         btnUpdateFood = new RoundedButton();
         btnDeleteFood = new RoundedButton();
         tfFilterFoodName = new RoundedTextField();
-        cbFilterFoodGroup = new JComboBox<>();   
-        tbFoodInfoList = new JTable(foods, properties);        
-        dcbmFoodGroupModel = new DefaultComboBoxModel();
-        FoodGroup_BUS.getAllFoodGroupNames(dcbmFoodGroupModel);
+        cbFilterFoodGroup = new JComboBox<>();       
+        dcbmFoodGroupModeInfo = new DefaultComboBoxModel();
+        FoodGroup_BUS.getAllFoodGroupNames(dcbmFoodGroupModeInfo);
+        dcbmFoodGroupModeFilter = new DefaultComboBoxModel();
+        FoodGroup_BUS.getAllFoodGroupNames(dcbmFoodGroupModeFilter);
+        
+        dtmTableModel = new DefaultTableModel(properties, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                //all cells false
+                return false;
+            }
+        };
+        
+        tbFoodInfoList = new JTable(dtmTableModel) {
+            @Override
+            public Class getColumnClass(int column) {
+                return (column == 5) ? Icon.class : Object.class;
+            }
+        };
+        
+        tbFoodInfoList.getSelectionModel().addListSelectionListener((e) -> {
+            rowSelectedListener(e);
+        });
+
+        Food_BUS.getAllFoods(dtmTableModel);
         
         JPanel infoLayout = new JPanel();
         infoLayout.setPreferredSize(new Dimension(width, (int) (height / 2)));
         infoLayout.setLayout(new BorderLayout());
+        
         /**
          * info Staff Form Layout
          */
@@ -105,7 +141,7 @@ public class FoodInfoListLayout extends JPanel{
         gbc.insets = new Insets(0, 0, 30, 80);
         gbc.anchor = GridBagConstraints.WEST;
 
-        cbFoodGroup.setModel(dcbmFoodGroupModel);
+        cbFoodGroup.setModel(dcbmFoodGroupModeInfo);
         cbFoodGroup.setFocusable(false);
         cbFoodGroup.setPreferredSize(new Dimension((int) (width / 3.5) , 35));
         cbFoodGroup.setFont(new java.awt.Font("sansserif", 0, 14));
@@ -188,6 +224,19 @@ public class FoodInfoListLayout extends JPanel{
         tfPrice.setMargin(new java.awt.Insets(2, 10, 2, 6));
         tfPrice.setRound(20);
         tfPrice.setPreferredSize(new Dimension((int) (width / 3.5) , 35));
+        
+        tfPrice.addKeyListener(new KeyAdapter() {
+         @Override
+         public void keyPressed(KeyEvent ke) {
+//            String value = tfPrice.getText();
+//            int l = value.length();
+            if (ke.getKeyChar() >= '0' && ke.getKeyChar() <= '9') {
+               tfPrice.setEditable(true);
+            } else {
+               tfPrice.setEditable(false);
+            }
+         }
+      });
         
         foodInfoFormLayout.add(tfPrice, gbc);
         
@@ -373,10 +422,14 @@ public class FoodInfoListLayout extends JPanel{
         gbcFilter.insets = new Insets(0, 0, 0, 60);
         gbcFilter.anchor = GridBagConstraints.WEST;
 
-        cbFilterFoodGroup.setModel(new DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cbFilterFoodGroup.setModel(dcbmFoodGroupModeFilter);
         cbFilterFoodGroup.setFocusable(false);
         cbFilterFoodGroup.setPreferredSize(new Dimension((int) (width / 3.5) , 35));
         cbFilterFoodGroup.setFont(new java.awt.Font("sansserif", 0, 14));
+        
+        cbFilterFoodGroup.addActionListener ((ActionEvent e) -> {
+            cbFilterFoodGroupChangeActionPerformed(e);
+        });
         
         filterLayout.add(cbFilterFoodGroup, gbcFilter);
         
@@ -403,6 +456,10 @@ public class FoodInfoListLayout extends JPanel{
         tfFilterFoodName.setRound(20);
         tfFilterFoodName.setPreferredSize(new Dimension((int) (width / 3.5) , 35));
         
+        tfFilterFoodName.getDocument().addDocumentListener((EventTextChange) (DocumentEvent evt) -> {
+            tfSearchTextChangeActionPerformed(evt);
+        });
+        
         filterLayout.add(tfFilterFoodName, gbcFilter);
         
         
@@ -410,7 +467,7 @@ public class FoodInfoListLayout extends JPanel{
          * Table Staff Layout
          */
         JPanel tableLayout = new JPanel();
-        tableLayout.setPreferredSize(new Dimension(width, (int) (height - height/2 - height / 10)));
+        tableLayout.setPreferredSize(new Dimension(width, (int) (height - height/2 - height / 10 - 10)));
         tableLayout.setLayout(new BorderLayout());
          
 //        tbFoodInfoList.setPreferredSize(new Dimension(bodyWidth, (int) (bodyHeight - bodyHeight / 2 - bodyHeight / 10)));
@@ -435,7 +492,9 @@ public class FoodInfoListLayout extends JPanel{
        
         JScrollPane jsp = new JScrollPane(tbFoodInfoList);
         tableLayout.setLayout(new BorderLayout());
-        jsp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+        JScrollBar bar = jsp.getVerticalScrollBar();
+        bar.setPreferredSize(new Dimension(10, 0));
+        jsp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 
         tableLayout.add(jsp, BorderLayout.CENTER);
         
@@ -445,15 +504,24 @@ public class FoodInfoListLayout extends JPanel{
         add(tableLayout);
     }
     
+    private int foodId = -1;
+    private File imageFile;
+    private final int FOOD_ID_ROW = 0;
+    private final int FOOD_GROUP_NAME_ROW = 1;
+    private final int FOOD_NAME_ROW = 2;
+    private final int FOOD_UNIT_ROW = 3;
+    private final int FOOD_PRICE_ROW = 4;
+    private final int FOOD_IMAGE_ROW = 5;
+    
     private void btnImageChooseActionPerformed(ActionEvent evt) {  
         JFileChooser chooser = new JFileChooser();
         FileNameExtensionFilter filter = new FileNameExtensionFilter("files", ImageIO.getReaderFileSuffixes());
         chooser.setFileFilter(filter);
         chooser.showOpenDialog(null);
-        File f = chooser.getSelectedFile();
+        imageFile = chooser.getSelectedFile();
         try{
             BufferedImage bffimg  = null;
-            bffimg = ImageIO.read(new File(f.getAbsolutePath()));
+            bffimg = ImageIO.read(new File(imageFile.getAbsolutePath()));
             Image img = bffimg.getScaledInstance(lbFoodImage.getWidth(), lbFoodImage.getHeight(), Image.SCALE_SMOOTH);
             ImageIcon format = new ImageIcon(img);
             lbFoodImage.setIcon(format);
@@ -462,16 +530,84 @@ public class FoodInfoListLayout extends JPanel{
         }
     } 
     
+    private void rowSelectedListener(ListSelectionEvent event) {
+        if (!event.getValueIsAdjusting()) {
+            int selectedRow = tbFoodInfoList.getSelectedRow();
+            if (selectedRow != -1) {
+                foodId = Integer.valueOf(tbFoodInfoList.getValueAt(selectedRow, FOOD_ID_ROW).toString());
+                cbFoodGroup.setSelectedItem(tbFoodInfoList.getValueAt(selectedRow, FOOD_GROUP_NAME_ROW).toString());
+                tfFoodName.setText(tbFoodInfoList.getValueAt(selectedRow, FOOD_NAME_ROW).toString());
+                tfUnit.setText(tbFoodInfoList.getValueAt(selectedRow, FOOD_UNIT_ROW).toString());
+                tfPrice.setText(tbFoodInfoList.getValueAt(selectedRow, FOOD_PRICE_ROW).toString());
+                
+                ImageIcon imageIcon = (ImageIcon) tbFoodInfoList.getValueAt(selectedRow, FOOD_IMAGE_ROW); // load the image to a imageIcon
+                Image image = imageIcon.getImage(); // transform it 
+                Image newimg = image.getScaledInstance(lbFoodImage.getWidth(), lbFoodImage.getHeight(), Image.SCALE_SMOOTH); // scale it the smooth way  
+                imageIcon = new ImageIcon(newimg);  // transform it back
+                
+                lbFoodImage.setIcon((Icon) imageIcon);
+            }
+        }
+    }
+    
     private void btnAddFoodActionPerformed(ActionEvent evt) { 
+        Food_DTO foodCheck = Food_BUS.getFoodById(foodId);
+        if (foodCheck != null) {
+            clearData();
+            JOptionPane.showMessageDialog(null, "Món ăn đã tồn tại", "Thêm món ăn",
+                    JOptionPane.WARNING_MESSAGE);
+        } else {
+            Food_BUS.addFood(cbFoodGroup.getSelectedItem().toString(), tfFoodName.getText(), tfUnit.getText(), tfPrice.getText(), imageFile);
+            Food_BUS.getAllFoods((DefaultTableModel) tbFoodInfoList.getModel());
+            if ("".equals(tfFoodName.getText()) || "".equals(tfUnit.getText()) || "".equals(tfPrice.getText()) || imageFile == null) {
+                // Vẫn còn thuộc tính chưa điền
+            } else {
+                // add food to db and clear data form
+                clearData();
+            }
+        }
         
     }
     
     private void btnUpdateFoodActionPerformed(ActionEvent evt) { 
+        Food_DTO foodCheck = Food_BUS.getFoodById(foodId);
+        
+        if (foodCheck != null) {
+            byte[] image = imageFile != null ? ImageUtils.convertFileToByteArray(imageFile) : foodCheck.getImage();
+            Food_BUS.updateFood(foodId, cbFoodGroup.getSelectedItem().toString(), tfFoodName.getText(), tfUnit.getText(), tfPrice.getText(), image);
+            Food_BUS.getAllFoods((DefaultTableModel) tbFoodInfoList.getModel());
+        } else {
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn món ăn cần cập nhật", "Cập nhật món ăn",
+                    JOptionPane.WARNING_MESSAGE);
+        }
         
     }
     
     private void btnDeleteFoodActionPerformed(ActionEvent evt) { 
-        
+        Food_BUS.deleteFood(foodId);
+        Food_BUS.getAllFoods((DefaultTableModel) tbFoodInfoList.getModel());
+        clearData();
+    }
+    
+    private void tfSearchTextChangeActionPerformed(DocumentEvent evt) {
+        Food_BUS.findFoodsByName((DefaultTableModel) tbFoodInfoList.getModel(), tfFilterFoodName.getText());
+    }
+    
+    private void cbFilterFoodGroupChangeActionPerformed(ActionEvent e) {
+        if ("Tất cả".equals(String.valueOf(cbFilterFoodGroup.getSelectedItem()))) {
+            Food_BUS.getAllFoods((DefaultTableModel) tbFoodInfoList.getModel());
+        } else {
+            Food_BUS.findFoodsByGroupName((DefaultTableModel) tbFoodInfoList.getModel(), String.valueOf(cbFilterFoodGroup.getSelectedItem()));
+        }
+    }
+    
+    private void clearData() {
+        tfFoodName.setText("");
+        tfUnit.setText("");
+        tfPrice.setText("");   
+        lbFoodImage.setIcon(null);
+        imageFile = null;
+        foodId = -1;
     }
    
     // Variables declaration - do not modify    
@@ -487,6 +623,8 @@ public class FoodInfoListLayout extends JPanel{
     private GUI.Component.RoundedTextField tfFilterFoodName;
     private javax.swing.JComboBox<String> cbFilterFoodGroup;
     private javax.swing.JTable tbFoodInfoList;
-    private javax.swing.DefaultComboBoxModel dcbmFoodGroupModel;
+    private javax.swing.DefaultComboBoxModel dcbmFoodGroupModeInfo;
+    private javax.swing.DefaultComboBoxModel dcbmFoodGroupModeFilter;
+    private javax.swing.table.DefaultTableModel dtmTableModel;
     // nd of variables declaration 
 }

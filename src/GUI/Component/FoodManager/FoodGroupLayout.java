@@ -307,7 +307,7 @@ public class FoodGroupLayout extends JPanel{
     private final int FOOD_GROUP_ID_ROW = 0;
     private final int FOOD_GROUP_NAME_ROW = 1;
     
-     private void rowSelectedListener(ListSelectionEvent event) {
+    private void rowSelectedListener(ListSelectionEvent event) {
         if (!event.getValueIsAdjusting()) {
             int selectedRow = tbFoodGroup.getSelectedRow();
             if (selectedRow != -1) {

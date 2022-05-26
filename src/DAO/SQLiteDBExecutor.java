@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package DAO;
 
 import java.sql.*;
@@ -89,10 +85,10 @@ public class SQLiteDBExecutor {
     /**
      * Execute non query to database with parameter
      *
-     * @param sqlStatement A sql statement to execute
+     * @param sqlStatement A SQL statement to execute
      * @param conn         A connection to database
      * @param parameter    List of parameter to fill in query string
-     * @return A boolean representing success or fail of execute sql statement
+     * @return A Boolean representing success or fail of execute sql statement
      */
     public static boolean executeNonQuery(String sqlStatement, Connection conn, Object... parameter) {
         try {
@@ -112,6 +108,9 @@ public class SQLiteDBExecutor {
     /**
      * Execute non query to database with no parameter
      *
+     * @param sqlStatement
+     * @param conn
+     * @return 
      * @see SQLiteDBExecutor#executeNonQuery(String, Connection, Object...)
      */
     public static boolean executeNonQuery(String sqlStatement, Connection conn) {
@@ -129,7 +128,7 @@ public class SQLiteDBExecutor {
     /**
      * Fill in sql statement with parameter
      *
-     * @param preparedStatement sql statement to fill in
+     * @param preparedStatement SQL statement to fill in
      * @param index             index of parameter (start by 1)
      * @param parameter         parameter to fill in
      * @throws SQLException
@@ -140,6 +139,7 @@ public class SQLiteDBExecutor {
         if (preparedStatement == null) return;
         if (Integer.class.equals(parameter.getClass())) preparedStatement.setInt(index, (Integer) parameter);
         else if (String.class.equals(parameter.getClass())) preparedStatement.setString(index, (String) parameter);
+        else if (byte[].class.equals(parameter.getClass())) preparedStatement.setBytes(index, (byte[]) parameter);
     }
 }
 
