@@ -6,8 +6,9 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import DAO.Interface.IDinnerTable_DAO;
 
-public class DinnerTable_DAO {
+public class DinnerTable_DAO implements IDinnerTable_DAO {
 
     static Connection conn;
 
@@ -16,7 +17,8 @@ public class DinnerTable_DAO {
      *
      * @return A list of dinner table
      */
-    public static ArrayList<DinnerTable_DTO> getAllTable() {
+    @Override
+    public ArrayList<DinnerTable_DTO> getAll() {
 
         ArrayList<DinnerTable_DTO> dinnerTables = new ArrayList<>();
 
@@ -46,7 +48,8 @@ public class DinnerTable_DAO {
      * @param name dinner table name
      * @return A int representing dinner table 's id
      */
-    public static DinnerTable_DTO getDinnerTable(String name) {
+    @Override
+    public DinnerTable_DTO getDinnerTable(String name) {
         DinnerTable_DTO dinnerTable = null;
 
         String sqlStatement = "Select * from BanAn where TenBan = ?";
@@ -75,7 +78,8 @@ public class DinnerTable_DAO {
      * @param name dinner table name
      * @return A list of dinner table found
      */
-    public static ArrayList<DinnerTable_DTO> findTables(String name) {
+    @Override
+    public ArrayList<DinnerTable_DTO> findTables(String name) {
         ArrayList<DinnerTable_DTO> dinnerTables = new ArrayList<>();
 
         String sqlStatement = "Select * From BanAn where TenBan like '%" +name+ "%'";
@@ -106,7 +110,8 @@ public class DinnerTable_DAO {
      * @param id dinner table id
      * @return A Boolean representing success or fail
      */
-    public static boolean setStatusOccupied(int id) {
+    @Override
+    public boolean setStatusOccupied(int id) {
         String sqlStatement = "Update BanAn Set TrangThai = 'Có Người' Where ID = ?";
         conn = SQLiteDBExecutor.connect();
 
@@ -123,7 +128,8 @@ public class DinnerTable_DAO {
      * @param id dinner table id
      * @return A Boolean representing success or fail
      */
-    public static Boolean setStatusEmpty(int id) {
+    @Override
+    public boolean setStatusEmpty(int id) {
         String sqlStatement = "Update BanAn Set TrangThai = 'Trống' Where ID = ?";
         conn = SQLiteDBExecutor.connect();
 
@@ -137,15 +143,16 @@ public class DinnerTable_DAO {
     /**
      * Add table
      *
-     * @param name dinner table name
+     * @param dinnerTable dinner table object
      * @return A Boolean representing success or fail
      */
-    public static Boolean addTable(String name) {
+    @Override
+    public boolean add(DinnerTable_DTO dinnerTable) {
         String sqlStatement = "insert into BanAn(TenBan,TrangThai) values(?,'Trống')";
         conn = SQLiteDBExecutor.connect();
 
         boolean isSuccess = SQLiteDBExecutor.executeNonQuery(sqlStatement, conn,
-                name);
+                dinnerTable.getName());
 
         SQLiteDBExecutor.closeConnection(conn);
 
@@ -155,16 +162,16 @@ public class DinnerTable_DAO {
     /**
      * Update table
      *
-     * @param id dinner table id
-     * @param name dinner table name
+     * @param dinnerTable dinner table object
      * @return A Boolean representing success or fail
      */
-    public static Boolean updateTable(int id,String name) {
+    @Override
+    public boolean update(DinnerTable_DTO dinnerTable) {
         String sqlStatement = "Update BanAn Set TenBan = ? Where ID = ?";
         conn = SQLiteDBExecutor.connect();
 
         boolean isSuccess = SQLiteDBExecutor.executeNonQuery(sqlStatement, conn,
-                name, id);
+                dinnerTable.getName(), dinnerTable.getId());
 
         SQLiteDBExecutor.closeConnection(conn);
 
@@ -177,7 +184,8 @@ public class DinnerTable_DAO {
      * @param id dinner table id
      * @return A Boolean representing success or fail
      */
-    public static Boolean deleteTable(int id) {
+    @Override
+    public boolean delete(String id) {
         String sqlStatement = "Delete from BanAn Where ID = ?";
         conn = SQLiteDBExecutor.connect();
 
