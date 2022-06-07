@@ -9,7 +9,6 @@ import DTO.TableModelItemUI;
 import GUI.Component.RoundedButton;
 import GUI.Component.TableManager.FoodCard.FoodCard;
 import Utils.DateUtils;
-import Utils.LoadBillDinnerTableByID;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -496,9 +495,7 @@ public class TableMapLayout extends JPanel {
        
        jPanel1.add(lbTextProvisionalAmount);
        jPanel1.add(tfProvisionalAmount);
-       
-       lbTextUnit1.setText(String.valueOf(new LoadBillDinnerTableByID().getTableId()));
-       
+              
        jPanel1.add(lbTextUnit1);
        
        // row 2 of provisional Amount Layout
