@@ -15,7 +15,7 @@ import javax.swing.ImageIcon;
 
 /**
  *
- * @author macbookpro
+ * @author Chanh Pham
  */
 public class ImageUtils {
     public static byte[] convertFileToByteArray(File imageFile) {

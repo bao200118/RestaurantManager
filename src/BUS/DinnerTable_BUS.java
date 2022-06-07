@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package BUS;
 
 import DTO.DinnerTable_DTO;
@@ -24,9 +20,19 @@ public class DinnerTable_BUS {
                 dinnerTable.getName(), dinnerTable.getStatus()});
         }
     }
+    
+    public static DinnerTable_DTO getTableInfoByTableName(String dinnerTableName) {
+        DinnerTable_DTO dinnerTableCheckDTO = DinnerTable_DAO.getDinnerTableByTableName(dinnerTableName);
+        return dinnerTableCheckDTO;
+    }
+    
+    public static DinnerTable_DTO getTableInfoByTableId(int dinnerTableId) {
+        DinnerTable_DTO dinnerTableCheckDTO = DinnerTable_DAO.getDinnerTableByTableId(dinnerTableId);
+        return dinnerTableCheckDTO;
+    }
 
     public static void addTableInfo(String dinnerTableName) {
-        DinnerTable_DTO dinnerTableCheckDTO = DinnerTable_DAO.getDinnerTable(dinnerTableName);
+        DinnerTable_DTO dinnerTableCheckDTO = DinnerTable_DAO.getDinnerTableByTableName(dinnerTableName);
         if (dinnerTableCheckDTO == null) {
             if (DinnerTable_DAO.addTable(dinnerTableName)) {
                 JOptionPane.showMessageDialog(null, "Thao tác thành công", "Thêm bàn ăn",
@@ -43,7 +49,7 @@ public class DinnerTable_BUS {
 
     public static void updateTableInfo(int dinnerTableId, String dinnerTableName) {
         
-        DinnerTable_DTO dinnerTableCheckDTO = DinnerTable_DAO.getDinnerTable(dinnerTableName);
+        DinnerTable_DTO dinnerTableCheckDTO = DinnerTable_DAO.getDinnerTableByTableName(dinnerTableName);
 
         if (dinnerTableCheckDTO == null) {
             if (DinnerTable_DAO.updateTable(dinnerTableId, dinnerTableName)) {

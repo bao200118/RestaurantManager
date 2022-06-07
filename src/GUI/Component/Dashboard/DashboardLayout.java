@@ -41,6 +41,9 @@ public class DashboardLayout extends JPanel{
             switch (index) {
                 case 0 -> bodyLayout.show(new TableManagerJFrame(dimensionBodyLayout));
                 case 1 -> bodyLayout.show(new FoodManagerJFrame(dimensionBodyLayout));
+                
+
+
                 case 2 -> bodyLayout.show(new StaffManagerJFrame(dimensionBodyLayout));
                 case 3 -> bodyLayout.show(new BillManagerJFrame(dimensionBodyLayout));
                 case 4 -> bodyLayout.show(new StatisticJFrame(dimensionBodyLayout));
