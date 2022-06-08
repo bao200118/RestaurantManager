@@ -79,7 +79,8 @@ public class DinnerTable_DAO implements IDinnerTable_DAO {
      * @param id
      * @return A object dinnerTable representing dinner table 's id
      */
-    public static DinnerTable_DTO getDinnerTableByTableId(int id) {
+    @Override
+    public DinnerTable_DTO getDinnerTableByTableId(int id) {
         DinnerTable_DTO dinnerTable = null;
 
         String sqlStatement = "Select * from BanAn where ID = ?";
@@ -225,4 +226,5 @@ public class DinnerTable_DAO implements IDinnerTable_DAO {
 
         return isSuccess;
     }
+
 }

@@ -19,8 +19,16 @@ public interface IDinnerTable_DAO extends DAO<DinnerTable_DTO> {
      * @param name dinner table name
      * @return A int representing dinner table 's id
      */
-    DinnerTable_DTO getDinnerTable(String name);
+    DinnerTable_DTO getDinnerTableByTableName(String name);
 
+    /**
+     * Get a table according to table id
+     *
+     * @param id dinner table id
+     * @return A object representing dinner table 's id
+     */
+    DinnerTable_DTO getDinnerTableByTableId(int id);
+    
     /**
      * Find tables
      *

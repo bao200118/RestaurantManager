@@ -24,17 +24,17 @@ public class DinnerTable_BUS {
     }
     
     public static DinnerTable_DTO getTableInfoByTableName(String dinnerTableName) {
-        DinnerTable_DTO dinnerTableCheckDTO = DinnerTable_DAO.getDinnerTableByTableName(dinnerTableName);
+        DinnerTable_DTO dinnerTableCheckDTO = dinnerTable_DAO.getDinnerTableByTableName(dinnerTableName);
         return dinnerTableCheckDTO;
     }
     
     public static DinnerTable_DTO getTableInfoByTableId(int dinnerTableId) {
-        DinnerTable_DTO dinnerTableCheckDTO = DinnerTable_DAO.getDinnerTableByTableId(dinnerTableId);
+        DinnerTable_DTO dinnerTableCheckDTO = dinnerTable_DAO.getDinnerTableByTableId(dinnerTableId);
         return dinnerTableCheckDTO;
     }
 
     public static void addTableInfo(String dinnerTableName) {
-        DinnerTable_DTO dinnerTableCheckDTO = dinnerTable_DAO.getDinnerTable(dinnerTableName);
+        DinnerTable_DTO dinnerTableCheckDTO = dinnerTable_DAO.getDinnerTableByTableName(dinnerTableName);
         if (dinnerTableCheckDTO == null) {
             if (dinnerTable_DAO.add(new DinnerTable_DTO(dinnerTableName))) {
                 JOptionPane.showMessageDialog(null, "Thao tác thành công", "Thêm bàn ăn",
@@ -51,7 +51,7 @@ public class DinnerTable_BUS {
 
     public static void updateTableInfo(int dinnerTableId, String dinnerTableName) {
 
-        DinnerTable_DTO dinnerTableCheckDTO = dinnerTable_DAO.getDinnerTable(dinnerTableName);
+        DinnerTable_DTO dinnerTableCheckDTO = dinnerTable_DAO.getDinnerTableByTableName(dinnerTableName);
 
         if (dinnerTableCheckDTO == null) {
             if (dinnerTable_DAO.update(new DinnerTable_DTO(dinnerTableId, dinnerTableName,""))) {
