@@ -1,13 +1,10 @@
 
 package DAO;
 
-import Utils.ImageUtils;
 import DTO.FoodGroup_DTO;
 import BUS.FoodGroup_BUS;
-import static DAO.DinnerTable_DAO.conn;
-import static DAO.FoodGroup_DAO.conn;
+import DAO.Interface.IFood_DAO;
 import DTO.Food_DTO;
-import java.io.File;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,7 +14,7 @@ import java.util.ArrayList;
  *
  * @author macbookpro
  */
-public class Food_DAO {
+public class Food_DAO implements IFood_DAO{
     static Connection conn;
 
     /**
@@ -25,8 +22,8 @@ public class Food_DAO {
      *
      * @return A list of food
      */
-    public static ArrayList<Food_DTO> getAllFoods() {
-
+    @Override
+    public ArrayList<Food_DTO> getAll() {
         ArrayList<Food_DTO> foods = new ArrayList<>();
 
         String sqlStatement = "Select ID, Image, TenMonAn, DonViTinh, Gia, TenNhom From MonAn, NhomMon where MaNhomMon = MaNhom order by ID ASC";
@@ -56,13 +53,15 @@ public class Food_DAO {
         return foods;
     }
     
+    
     /**
      * Get a food according to food name
      *
      * @param name food name
      * @return A int representing food 's id
      */
-    public static Food_DTO getFoodByName(String name) {
+    @Override
+    public Food_DTO getFoodByName(String name) {
         Food_DTO food = null;
 
         String sqlStatement = "Select * from MonAn where TenMonAn = ?";
@@ -96,7 +95,8 @@ public class Food_DAO {
      * @param id food id
      * @return A food representing food 's id
      */
-    public static Food_DTO getFoodById(int id) {
+    @Override
+    public Food_DTO getFoodById(int id) {
         Food_DTO food = null;
 
         String sqlStatement = "Select * from MonAn where ID = ?";
@@ -127,19 +127,15 @@ public class Food_DAO {
     /**
      * Add food
      *
-     * @param name food name
-     * @param foodGroupName  food 's foodGroupName
-     * @param imageFile   food 's imageFile
-     * @param unit   food 's unit
-     * @param price  food 's price
+     * @param food  food object
      * @return A Boolean representing success or fail
      */
-    public static Boolean addFood(String foodGroupName, String name, String unit, int price, File imageFile) {
+    @Override
+    public boolean add(Food_DTO food) {
         String sqlStatement = "insert into MonAn(MaNhomMon,TenMonAn,DonViTinh,Gia,Image) values(?,?,?,?,?)";
         conn = SQLiteDBExecutor.connect();
-        FoodGroup_DTO foodGroup = FoodGroup_BUS.getFoodGroupByName(foodGroupName);
-        byte[] image = ImageUtils.convertFileToByteArray(imageFile);
-        boolean isSuccess = SQLiteDBExecutor.executeNonQuery(sqlStatement, conn, foodGroup.getId(), name, unit, price, image);
+        FoodGroup_DTO foodGroup = FoodGroup_BUS.getFoodGroupByName(food.getFoodGroupName());
+        boolean isSuccess = SQLiteDBExecutor.executeNonQuery(sqlStatement, conn, foodGroup.getId(), food.getName(), food.getUnit(), food.getPrice(), food.getImage());
         SQLiteDBExecutor.closeConnection(conn);     
         return isSuccess;
     }
@@ -147,20 +143,16 @@ public class Food_DAO {
     /**
      * Update food
      * 
-     * @param id food id
-     * @param name food name
-     * @param foodGroupName  food 's foodGroupName
-     * @param imageFile   food 's imageFile
-     * @param unit   food 's unit
-     * @param price  food 's price
+     * @param food  food object
      * @return A Boolean representing success or fail
      */
-    public static Boolean updateFood(int id, String foodGroupName, String name, String unit, int price, byte[] imageFile) {
+    @Override
+    public boolean update(Food_DTO food) {
         String sqlStatement = "UPDATE MonAn SET MaNhomMon = ?, TenMonAn = ?, DonViTinh = ?, Gia = ?, Image = ? WHERE ID = ?";
         conn = SQLiteDBExecutor.connect();
 
-        FoodGroup_DTO foodGroup = FoodGroup_BUS.getFoodGroupByName(foodGroupName);
-        boolean isSuccess = SQLiteDBExecutor.executeNonQuery(sqlStatement, conn, foodGroup.getId(), name, unit, price, imageFile, id);
+        FoodGroup_DTO foodGroup = FoodGroup_BUS.getFoodGroupByName(food.getFoodGroupName());
+        boolean isSuccess = SQLiteDBExecutor.executeNonQuery(sqlStatement, conn, foodGroup.getId(), food.getName(), food.getUnit(), food.getPrice(), food.getImage(), food.getId());
 
         SQLiteDBExecutor.closeConnection(conn);
 
@@ -170,19 +162,21 @@ public class Food_DAO {
     /**
      * Delete food
      *
-     * @param id food id
+     * @param foodId food id
      * @return A Boolean representing success or fail
      */
-    public static Boolean deleteFood(int id) {
+    @Override
+    public boolean delete(String foodId) {
         String sqlStatement = "Delete from MonAn Where ID = ?";
         conn = SQLiteDBExecutor.connect();
 
-        boolean isSuccess = SQLiteDBExecutor.executeNonQuery(sqlStatement, conn, id);
+        boolean isSuccess = SQLiteDBExecutor.executeNonQuery(sqlStatement, conn, Integer.valueOf(foodId));
 
         SQLiteDBExecutor.closeConnection(conn);
 
         return isSuccess;
     }
+
     
     /**
      * Find foods by food name
@@ -190,7 +184,8 @@ public class Food_DAO {
      * @param name food name
      * @return A list of food found
      */
-    public static ArrayList<Food_DTO> findFoodsByName(String name) {
+    @Override
+    public ArrayList<Food_DTO> findFoodsByName(String name) {
         ArrayList<Food_DTO> foods = new ArrayList<>();
 
         String sqlStatement = "Select * From MonAn where TenMonAn like '%" +name+ "%'";
@@ -226,7 +221,8 @@ public class Food_DAO {
      * @param groupName food group Name
      * @return A list of food found
      */
-    public static ArrayList<Food_DTO> findFoodsByGroupName(String groupName) {
+    @Override
+    public ArrayList<Food_DTO> findFoodsByGroupName(String groupName) {
         ArrayList<Food_DTO> foods = new ArrayList<>();
 
         String sqlStatement = "Select * From MonAn where MaNhomMon = ?";

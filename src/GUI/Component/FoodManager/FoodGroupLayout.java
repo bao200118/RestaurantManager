@@ -1,6 +1,7 @@
 package GUI.Component.FoodManager;
 
 import BUS.FoodGroup_BUS;
+import DTO.FoodGroup_DTO;
 import GUI.Component.RoundedButton;
 import GUI.Component.RoundedTextField;
 import Interface.EventTextChange;
@@ -318,13 +319,13 @@ public class FoodGroupLayout extends JPanel{
     }
     
     private void btnAddFoodGroupActionPerformed(ActionEvent evt) {  
-        FoodGroup_BUS.addFoodGroup(tfFoodGroupName.getText());
+        FoodGroup_BUS.addFoodGroup(new FoodGroup_DTO(tfFoodGroupName.getText()));
         FoodGroup_BUS.getAllFoodGroups((DefaultTableModel) tbFoodGroup.getModel());
     } 
     
     private void btnUpdateFoodGroupActionPerformed(ActionEvent evt) {  
         try {
-            FoodGroup_BUS.updateFoodGroup(Integer.parseInt(tfFoodGroupID.getText()), tfFoodGroupName.getText());
+            FoodGroup_BUS.updateFoodGroup(new FoodGroup_DTO(Integer.parseInt(tfFoodGroupID.getText()), tfFoodGroupName.getText()));
             FoodGroup_BUS.getAllFoodGroups((DefaultTableModel) tbFoodGroup.getModel());
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(null, "Vui lòng chọn nhóm món ăn cần cập nhật", "Cập nhật nhóm món ăn",

@@ -5,6 +5,7 @@
 package DAO;
 
 import DTO.FoodGroup_DTO;
+import DAO.Interface.IFoodGroup_DAO;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -14,7 +15,7 @@ import java.util.ArrayList;
  *
  * @author Phạm Văn Chánh
  */
-public class FoodGroup_DAO {
+public class FoodGroup_DAO implements IFoodGroup_DAO{
      static Connection conn;
 
     /**
@@ -22,8 +23,8 @@ public class FoodGroup_DAO {
      *
      * @return A list of food group
      */
-    public static ArrayList<FoodGroup_DTO> getAllFoodGroups() {
-
+    @Override
+    public ArrayList<FoodGroup_DTO> getAll() {
         ArrayList<FoodGroup_DTO> foodGroups = new ArrayList<>();
 
         String sqlStatement = "Select * From NhomMon";
@@ -51,7 +52,8 @@ public class FoodGroup_DAO {
      * @param name food group name
      * @return A int representing food group 's id
      */
-    public static FoodGroup_DTO getFoodGroupByName(String name) {
+    @Override
+    public FoodGroup_DTO getFoodGroupByName(String name) {
         FoodGroup_DTO foodGroup = null;
 
         String sqlStatement = "Select * from NhomMon where TenNhom = ?";
@@ -79,7 +81,8 @@ public class FoodGroup_DAO {
      * @param id food group id
      * @return A food record representing food group 's id
      */
-    public static FoodGroup_DTO getFoodGroupById(int id) {
+    @Override
+    public FoodGroup_DTO getFoodGroupById(int id) {
         FoodGroup_DTO foodGroup = null;
 
         String sqlStatement = "Select * from NhomMon where MaNhom = ?";
@@ -107,7 +110,8 @@ public class FoodGroup_DAO {
      * @param name food group name
      * @return A list of food group found
      */
-    public static ArrayList<FoodGroup_DTO> findFoodGroups(String name) {
+    @Override
+    public ArrayList<FoodGroup_DTO> findFoodGroups(String name) {
         ArrayList<FoodGroup_DTO> foodGroups = new ArrayList<>();
 
         String sqlStatement = "Select * From NhomMon where TenNhom like '%" +name+ "%'";
@@ -134,34 +138,34 @@ public class FoodGroup_DAO {
      /**
      * Add food group
      *
-     * @param name food group name
+     * @param foodGroup foodGroup object
      * @return A Boolean representing success or fail
      */
-    public static Boolean addFoodGroup(String name) {
+    @Override
+    public boolean add(FoodGroup_DTO foodGroup) {
         String sqlStatement = "insert into NhomMon(TenNhom) values(?)";
         conn = SQLiteDBExecutor.connect();
 
-        boolean isSuccess = SQLiteDBExecutor.executeNonQuery(sqlStatement, conn,
-                name);
+        boolean isSuccess = SQLiteDBExecutor.executeNonQuery(sqlStatement, conn, foodGroup.getName());
 
         SQLiteDBExecutor.closeConnection(conn);
 
         return isSuccess;
     }
     
+    
     /**
      * Update food group
      *
-     * @param id food group id
-     * @param name food group name
+     * @param foodGroup foodGroup object
      * @return A Boolean representing success or fail
      */
-    public static Boolean updateFoodGroup(int id,String name) {
+    @Override
+    public boolean update(FoodGroup_DTO foodGroup) {
         String sqlStatement = "Update NhomMon Set TenNhom = ? Where MaNhom = ?";
         conn = SQLiteDBExecutor.connect();
 
-        boolean isSuccess = SQLiteDBExecutor.executeNonQuery(sqlStatement, conn,
-                name, id);
+        boolean isSuccess = SQLiteDBExecutor.executeNonQuery(sqlStatement, conn, foodGroup.getName(), foodGroup.getId());
 
         SQLiteDBExecutor.closeConnection(conn);
 
@@ -171,14 +175,15 @@ public class FoodGroup_DAO {
      /**
      * Delete food group
      *
-     * @param id food group id
+     * @param foodGroup 
      * @return A Boolean representing success or fail
      */
-    public static Boolean deleteTable(int id) {
+    @Override
+    public boolean delete(String foodGroup) {
         String sqlStatement = "Delete from NhomMon Where MaNhom = ?";
         conn = SQLiteDBExecutor.connect();
 
-        boolean isSuccess = SQLiteDBExecutor.executeNonQuery(sqlStatement, conn, id);
+        boolean isSuccess = SQLiteDBExecutor.executeNonQuery(sqlStatement, conn, foodGroup);
 
         SQLiteDBExecutor.closeConnection(conn);
 

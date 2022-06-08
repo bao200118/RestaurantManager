@@ -11,9 +11,12 @@ import javax.swing.table.DefaultTableModel;
  * @author macbookpro
  */
 public class Bill_BUS {
+    
+    static Bill_DAO bill_DAO = new Bill_DAO();
+
     public static void getAllBills(DefaultTableModel tableModel) {
         tableModel.setRowCount(0);
-        ArrayList<Bill_DTO> billList = Bill_DAO.getAllBills();
+        ArrayList<Bill_DTO> billList = bill_DAO.getAll();
         for (Bill_DTO bill : billList) {
             tableModel.addRow(new Object[]{bill.getID(), bill.getTableName(),bill.getDateOfPayment(), bill.getPrice()});
         }
@@ -21,9 +24,9 @@ public class Bill_BUS {
     
     public static void getAllBillsBetweenFromDayAndToDay(DefaultTableModel tableModel, String fromDay, String toDay) {
         tableModel.setRowCount(0);
-        ArrayList<Bill_DTO> billList = Bill_DAO.getAllBillsBetweenFromDayAndToDay(fromDay, toDay);
+        ArrayList<Bill_DTO> billList = bill_DAO.getAllBillsBetweenFromDayAndToDay(fromDay, toDay);
         for (Bill_DTO bill : billList) {
-            tableModel.addRow(new Object[]{bill.getID(), bill.getTableName(),bill.getDateOfPayment(), bill.getPrice()});
+            tableModel.addRow(new Object[]{bill.getID(), bill.getTableName(), bill.getDateOfPayment(), bill.getPrice()});
         }
     }
 }
