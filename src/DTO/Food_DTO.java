@@ -3,7 +3,6 @@ package DTO;
 
 import java.awt.Image;
 import java.util.Objects;
-import javax.swing.ImageIcon;
 
 /**
  *

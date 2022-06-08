@@ -20,14 +20,10 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
@@ -53,13 +49,13 @@ public class FoodInfoListLayout extends JPanel{
     String[] properties = { "ID", "Tên nhóm món", "Tên món", "Đơn vị tính", "Giá", "Ảnh"};
 
 
-    public FoodInfoListLayout(Dimension dimension) throws IOException {
+    public FoodInfoListLayout(Dimension dimension) {
         this.dimension = dimension;
         initComponents();
         setOpaque(false);
     }
     
-    private void initComponents() throws IOException {
+    private void initComponents() {
         int width = dimension.width;
         int height = dimension.height - dimension.height / 22 - 10;
        

@@ -13,13 +13,13 @@ import javax.swing.JPanel;
 public class FoodManagerJFrame extends JPanel{
     private final Dimension dimension;
 
-    public FoodManagerJFrame(Dimension dimension) throws IOException {
+    public FoodManagerJFrame(Dimension dimension) {
         this.dimension = dimension;
         initComponents();
         setOpaque(false);
     }
     
-    private void initComponents() throws IOException {
+    private void initComponents() {
         int bodyWidth = dimension.width;
         int bodyHeight = dimension.height;
         

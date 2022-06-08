@@ -1,4 +1,3 @@
-
 package GUI;
 
 /**
@@ -6,6 +5,7 @@ package GUI;
  * @author macbookpro
  */
 public class Main {
+
     public static void main(String args[]) {
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
@@ -20,7 +20,7 @@ public class Main {
 //            java.util.logging.Logger.getLogger(TEST.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
 //            java.util.logging.Logger.getLogger(TEST.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
 //            java.util.logging.Logger.getLogger(TEST.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        
+
         java.awt.EventQueue.invokeLater(() -> {
             new DashboardJFrame().setVisible(true);
         });

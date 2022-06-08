@@ -1,5 +1,7 @@
 package GUI;
 
+import BUS.Bill_BUS;
+import Utils.DateUtils;
 import GUI.Component.RoundedButton;
 import com.toedter.calendar.JDateChooser;
 import java.awt.BorderLayout;
@@ -15,19 +17,18 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.table.DefaultTableModel;
 
 public class BillManagerJFrame extends JPanel{
     private final Dimension dimension;
-    String[][] bills = {
-        { "HD001", "Bàn 1", "12/05/1999", "10000000" },
-        { "HD002", "Bàn 4", "12/05/1999", "20000000" }
-    };
     String[] properties = { "Số Hoá Đơn ", "Tên bàn", "Ngày Thanh toán", "Số tiền"};
 
 
@@ -45,7 +46,16 @@ public class BillManagerJFrame extends JPanel{
         dtpToDate = new JDateChooser();
         btnFilter = new RoundedButton();
         btnShowAll = new RoundedButton();
-        tbBills = new JTable(bills, properties);
+        dtmTableModel = new DefaultTableModel(properties, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                //all cells false
+                return false;
+            }
+        };
+        tbBills = new JTable(dtmTableModel);
+        Bill_BUS.getAllBills(dtmTableModel);
+        dateUtils = new DateUtils();
         
         setPreferredSize(new Dimension(bodyWidth, bodyHeight));
         
@@ -82,6 +92,7 @@ public class BillManagerJFrame extends JPanel{
         gbc.anchor = GridBagConstraints.WEST;
 
         dtpFromDate.setFocusable(false);
+        dtpFromDate.setDateFormatString("dd/MM/yyyy");
         dtpFromDate.setPreferredSize(new Dimension((int) (bodyWidth / 3.5) , 35));
         dtpFromDate.setFont(new java.awt.Font("sansserif", 0, 14));
         add(dtpFromDate, gbc);
@@ -104,6 +115,7 @@ public class BillManagerJFrame extends JPanel{
         gbc.anchor = GridBagConstraints.WEST;
 
         dtpToDate.setFocusable(false);
+        dtpToDate.setDateFormatString("dd/MM/yyyy");
         dtpToDate.setPreferredSize(new Dimension((int) (bodyWidth / 3.5) , 35));
         dtpToDate.setFont(new java.awt.Font("sansserif", 0, 14));
         add(dtpToDate, gbc);
@@ -202,11 +214,16 @@ public class BillManagerJFrame extends JPanel{
     }
     
     private void btnFilterActionPerformed(ActionEvent evt) {  
-
+//        if ("Tất cả".equals(String.valueOf(cbFilterFoodGroup.getSelectedItem()))) {
+//            Food_BUS.getAllFoods((DefaultTableModel) tbFoodInfoList.getModel());
+//        } else {
+//        }
+        Bill_BUS.getAllBillsBetweenFromDayAndToDay((DefaultTableModel) tbBills.getModel(), dateUtils.formatDate(dtpFromDate.getDate()), dateUtils.formatDate(dtpToDate.getDate()));
+        System.out.println(String.valueOf(dtpFromDate.getDate()));
     } 
     
     private void btnShowAllActionPerformed(ActionEvent evt) {  
-
+        
     } 
     
     @Override
@@ -225,5 +242,7 @@ public class BillManagerJFrame extends JPanel{
     private GUI.Component.RoundedButton btnFilter;
     private GUI.Component.RoundedButton btnShowAll;
     private javax.swing.JTable tbBills;
+    private javax.swing.table.DefaultTableModel dtmTableModel;
+    private DateUtils dateUtils;
     // nd of variables declaration 
 }

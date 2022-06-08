@@ -48,14 +48,44 @@ public class DinnerTable_DAO implements IDinnerTable_DAO {
      * @param name dinner table name
      * @return A int representing dinner table 's id
      */
+
     @Override
-    public DinnerTable_DTO getDinnerTable(String name) {
+    public DinnerTable_DTO getDinnerTableByTableName(String name) {
         DinnerTable_DTO dinnerTable = null;
 
         String sqlStatement = "Select * from BanAn where TenBan = ?";
         conn = SQLiteDBExecutor.connect();
 
         ResultSet rs = SQLiteDBExecutor.executeQuery(sqlStatement, conn, name);
+        try {
+            if (rs.next()) {
+                dinnerTable = new DinnerTable_DTO(rs.getInt("ID"),
+                        rs.getString("TenBan"),
+                        rs.getString("TrangThai"));
+            }
+            rs.close();
+            rs.getStatement().close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        SQLiteDBExecutor.closeConnection(conn);
+        return dinnerTable;
+    }
+    
+    /**
+     * Get a table according to table id
+     *
+     * @param id
+     * @return A object dinnerTable representing dinner table 's id
+     */
+    public static DinnerTable_DTO getDinnerTableByTableId(int id) {
+        DinnerTable_DTO dinnerTable = null;
+
+        String sqlStatement = "Select * from BanAn where ID = ?";
+        conn = SQLiteDBExecutor.connect();
+
+        ResultSet rs = SQLiteDBExecutor.executeQuery(sqlStatement, conn, id);
         try {
             if (rs.next()) {
                 dinnerTable = new DinnerTable_DTO(rs.getInt("ID"),
