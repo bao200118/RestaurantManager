@@ -1,6 +1,7 @@
 
 package DAO;
 
+import DAO.Interface.IBillDetail_DAO;
 import DTO.BillDetail_DTO;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -11,7 +12,7 @@ import java.util.ArrayList;
  *
  * @author macbookpro
  */
-public class BillDetail_DAO {
+public class BillDetail_DAO implements IBillDetail_DAO{
     static Connection conn;
 
     /**
@@ -20,7 +21,8 @@ public class BillDetail_DAO {
      * @param tableId   bill detail's table id
      * @return A list of bill detail by table id
      */
-    public static ArrayList<BillDetail_DTO> loadBillDetailByTableId(int tableId) {
+    @Override
+    public ArrayList<BillDetail_DTO> loadBillDetailByTableId(int tableId) {
 
         ArrayList<BillDetail_DTO> billDetails = new ArrayList<>();
 
@@ -48,6 +50,26 @@ public class BillDetail_DAO {
         }
         SQLiteDBExecutor.closeConnection(conn);
         return billDetails;
+    }
+
+    @Override
+    public ArrayList<BillDetail_DTO> getAll() {
+        throw new UnsupportedOperationException("Not supported yet."); 
+    }
+
+    @Override
+    public boolean add(BillDetail_DTO obj) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean update(BillDetail_DTO obj) {
+        throw new UnsupportedOperationException("Not supported yet."); 
+    }
+
+    @Override
+    public boolean delete(String uniqueProp) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
     
     

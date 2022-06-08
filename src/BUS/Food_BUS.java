@@ -4,7 +4,6 @@ package BUS;
 import DAO.Food_DAO;
 import Utils.ImageUtils;
 import DTO.Food_DTO;
-import java.io.File;
 import java.util.ArrayList;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -15,9 +14,11 @@ import javax.swing.table.DefaultTableModel;
  * @author macbookpro
  */
 public class Food_BUS {
+    static Food_DAO food_DAO = new Food_DAO() {};
+
     public static void getAllFoods(DefaultTableModel tableModel) {
         tableModel.setRowCount(0);
-        ArrayList<Food_DTO> foodList = Food_DAO.getAllFoods();
+        ArrayList<Food_DTO> foodList = food_DAO.getAll();
         for (Food_DTO food : foodList) {
             ImageIcon icon = ImageUtils.convertByteArrayToImageIcon(food.getImage());
             tableModel.addRow(new Object[]{food.getId(), food.getFoodGroupName(),food.getName(), food.getUnit(), food.getPrice(), icon});
@@ -25,22 +26,21 @@ public class Food_BUS {
     }
     
     public static Food_DTO getFoodByName(String foodName) {
-        return Food_DAO.getFoodByName(foodName);
+        return food_DAO.getFoodByName(foodName);
     }
     
     public static Food_DTO getFoodById(int id) {
-        return Food_DAO.getFoodById(id);
+        return food_DAO.getFoodById(id);
     }
     
-    public static void addFood(String foodGroupName, String name, String unit, String priceText, File imageFile) {
+    public static void addFood(Food_DTO food) {
         
-        int price = "".equals(priceText) ? 0 : Integer.valueOf(priceText);
-        if (!"".equals(foodGroupName) && !"".equals(name) && !"".equals(unit) && price != 0 && imageFile != null) {
-            Food_DTO foodCheckDTO = getFoodByName(name);  
-            System.out.println(foodCheckDTO);
+        if (!"".equals(food.getFoodGroupName()) && !"".equals(food.getName()) && !"".equals(food.getUnit()) && food.getPrice() != -1 && food.getImage() != null) {
+            Food_DTO foodCheckDTO = getFoodByName(food.getName());  
+            
             if (foodCheckDTO == null) {
                 
-                if (Food_DAO.addFood(foodGroupName, name, unit, price, imageFile)) {
+                if (food_DAO.add(new Food_DTO(food.getImage(), food.getFoodGroupName(), food.getName(), food.getUnit(), food.getPrice()))) {
                     JOptionPane.showMessageDialog(null, "Thao tác thành công", "Thêm món ăn",
                         JOptionPane.PLAIN_MESSAGE);
                 } else {
@@ -58,15 +58,13 @@ public class Food_BUS {
         
     }
     
-    public static void updateFood(int id, String foodGroupName, String name, String unit, String priceText, byte[] imageFile) {
-        
-        int price = "".equals(priceText) ? 0 : Integer.valueOf(priceText);
-        
-        if (!"".equals(foodGroupName) && !"".equals(name) && !"".equals(unit) && price != 0 && imageFile != null) {
-            Food_DTO foodCheckDTO = getFoodByName(foodGroupName);
+    public static void updateFood(Food_DTO food) {
+                
+        if (!"".equals(food.getFoodGroupName()) && !"".equals(food.getName()) && !"".equals(food.getUnit()) && food.getPrice() != -1 && food.getImage() != null) {
+            Food_DTO foodCheckDTO = getFoodByName(food.getFoodGroupName());
 
             if (foodCheckDTO == null) {
-                if (Food_DAO.updateFood(id, foodGroupName, name, unit, price, imageFile)) {
+                if (food_DAO.update( new Food_DTO(food.getId(), food.getImage(), food.getFoodGroupName(), food.getName(), food.getUnit(), food.getPrice()))) {
                     JOptionPane.showMessageDialog(null, "Thao tác thành công", "Cập nhật nhóm món ăn",
                         JOptionPane.PLAIN_MESSAGE);
                 } else {
@@ -83,13 +81,13 @@ public class Food_BUS {
         }     
     }
     
-    public static void deleteFood(int foodId) {
-
-        if (foodId != -1) {
+    public static void deleteFood(String foodId) {
+        int id = Integer.valueOf(foodId);
+        if (id != -1) {
             int result = JOptionPane.showConfirmDialog(null, "Bạn có muốn xóa không?", "Xóa món ăn", JOptionPane.YES_NO_OPTION);
             if (result == JOptionPane.YES_OPTION) {
             
-                if (Food_DAO.deleteFood(foodId)) {
+                if (food_DAO.delete(foodId)) {
                     JOptionPane.showMessageDialog(null, "Thao tác thành công", "Xóa món ăn",
                         JOptionPane.PLAIN_MESSAGE);
                 } else {
@@ -108,7 +106,7 @@ public class Food_BUS {
     
     public static void findFoodsByName(DefaultTableModel tableModel, String name) {
         tableModel.setRowCount(0);
-        ArrayList<Food_DTO> foodList = Food_DAO.findFoodsByName(name);
+        ArrayList<Food_DTO> foodList = food_DAO.findFoodsByName(name);
         for (Food_DTO food : foodList) {
             ImageIcon icon = ImageUtils.convertByteArrayToImageIcon(food.getImage());
             tableModel.addRow(new Object[]{food.getId(), food.getFoodGroupName(),food.getName(), food.getUnit(), food.getPrice(), icon});
@@ -117,7 +115,7 @@ public class Food_BUS {
     
     public static void findFoodsByGroupName(DefaultTableModel tableModel, String groupName) {
         tableModel.setRowCount(0);
-        ArrayList<Food_DTO> foodList = Food_DAO.findFoodsByGroupName(groupName);
+        ArrayList<Food_DTO> foodList = food_DAO.findFoodsByGroupName(groupName);
         for (Food_DTO food : foodList) {
             ImageIcon icon = ImageUtils.convertByteArrayToImageIcon(food.getImage());
             tableModel.addRow(new Object[]{food.getId(), food.getFoodGroupName(),food.getName(), food.getUnit(), food.getPrice(), icon});

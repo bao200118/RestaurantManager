@@ -17,6 +17,8 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -93,6 +95,7 @@ public class BillManagerJFrame extends JPanel{
 
         dtpFromDate.setFocusable(false);
         dtpFromDate.setDateFormatString("dd/MM/yyyy");
+        dtpFromDate.setDate(new Date());
         dtpFromDate.setPreferredSize(new Dimension((int) (bodyWidth / 3.5) , 35));
         dtpFromDate.setFont(new java.awt.Font("sansserif", 0, 14));
         add(dtpFromDate, gbc);
@@ -116,6 +119,7 @@ public class BillManagerJFrame extends JPanel{
 
         dtpToDate.setFocusable(false);
         dtpToDate.setDateFormatString("dd/MM/yyyy");
+        dtpToDate.setDate(new Date());
         dtpToDate.setPreferredSize(new Dimension((int) (bodyWidth / 3.5) , 35));
         dtpToDate.setFont(new java.awt.Font("sansserif", 0, 14));
         add(dtpToDate, gbc);
@@ -219,7 +223,6 @@ public class BillManagerJFrame extends JPanel{
 //        } else {
 //        }
         Bill_BUS.getAllBillsBetweenFromDayAndToDay((DefaultTableModel) tbBills.getModel(), dateUtils.formatDate(dtpFromDate.getDate()), dateUtils.formatDate(dtpToDate.getDate()));
-        System.out.println(String.valueOf(dtpFromDate.getDate()));
     } 
     
     private void btnShowAllActionPerformed(ActionEvent evt) {  

@@ -547,13 +547,23 @@ public class FoodInfoListLayout extends JPanel{
     }
     
     private void btnAddFoodActionPerformed(ActionEvent evt) { 
-        Food_DTO foodCheck = Food_BUS.getFoodById(foodId);
+        Food_DTO foodCheck = Food_BUS.getFoodByName(tfFoodName.getText());
         if (foodCheck != null) {
             clearData();
             JOptionPane.showMessageDialog(null, "Món ăn đã tồn tại", "Thêm món ăn",
                     JOptionPane.WARNING_MESSAGE);
         } else {
-            Food_BUS.addFood(cbFoodGroup.getSelectedItem().toString(), tfFoodName.getText(), tfUnit.getText(), tfPrice.getText(), imageFile);
+            byte[] image = null;
+            if (imageFile != null) {
+                image = ImageUtils.convertFileToByteArray(imageFile);
+            }      
+            
+            int price = "".equals(tfPrice.getText()) ? -1 : Integer.valueOf(tfPrice.getText());
+            Food_BUS.addFood(new Food_DTO(image, cbFoodGroup.getSelectedItem().toString(), tfFoodName.getText(), tfUnit.getText(), price));
+            
+            System.out.println(image + " " + cbFoodGroup.getSelectedItem().toString() + " " + tfFoodName.getText() + " " + tfUnit.getText() + " " + price);
+            
+            
             Food_BUS.getAllFoods((DefaultTableModel) tbFoodInfoList.getModel());
             if ("".equals(tfFoodName.getText()) || "".equals(tfUnit.getText()) || "".equals(tfPrice.getText()) || imageFile == null) {
                 // Vẫn còn thuộc tính chưa điền
@@ -570,7 +580,8 @@ public class FoodInfoListLayout extends JPanel{
         
         if (foodCheck != null) {
             byte[] image = imageFile != null ? ImageUtils.convertFileToByteArray(imageFile) : foodCheck.getImage();
-            Food_BUS.updateFood(foodId, cbFoodGroup.getSelectedItem().toString(), tfFoodName.getText(), tfUnit.getText(), tfPrice.getText(), image);
+            int price = "".equals(tfPrice.getText()) ? -1 : Integer.valueOf(tfPrice.getText());
+            Food_BUS.updateFood(new Food_DTO(foodId, image, cbFoodGroup.getSelectedItem().toString(), tfFoodName.getText(), tfUnit.getText(), price));
             Food_BUS.getAllFoods((DefaultTableModel) tbFoodInfoList.getModel());
         } else {
             JOptionPane.showMessageDialog(null, "Vui lòng chọn món ăn cần cập nhật", "Cập nhật món ăn",
@@ -580,7 +591,7 @@ public class FoodInfoListLayout extends JPanel{
     }
     
     private void btnDeleteFoodActionPerformed(ActionEvent evt) { 
-        Food_BUS.deleteFood(foodId);
+        Food_BUS.deleteFood(String.valueOf(foodId));
         Food_BUS.getAllFoods((DefaultTableModel) tbFoodInfoList.getModel());
         clearData();
     }

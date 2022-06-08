@@ -2,6 +2,7 @@
 package DAO;
 
 import DTO.Bill_DTO;
+import DAO.Interface.IBill_DAO;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,7 +12,7 @@ import java.util.ArrayList;
  *
  * @author macbookpro
  */
-public class Bill_DAO {
+public class Bill_DAO implements IBill_DAO{
     static Connection conn;
 
     /**
@@ -19,8 +20,8 @@ public class Bill_DAO {
      *
      * @return A list of bill
      */
-    public static ArrayList<Bill_DTO> getAllBills() {
-
+    @Override
+    public ArrayList<Bill_DTO> getAll() {
         ArrayList<Bill_DTO> bills = new ArrayList<>();
 
         String sqlStatement = "select HoaDon.ID,BanAn.TenBan,HoaDon.NgayThanhToan,HoaDon.SoTien from HoaDon,BanAn where HoaDon.IDBan = BanAn.ID AND TinhTrang = 1";
@@ -55,7 +56,8 @@ public class Bill_DAO {
      * @param toDay
      * @return A list of bill
      */
-    public static ArrayList<Bill_DTO> getAllBillsBetweenFromDayAndToDay(String fromDay, String toDay) {
+    @Override
+    public ArrayList<Bill_DTO> getAllBillsBetweenFromDayAndToDay(String fromDay, String toDay) {
 
         ArrayList<Bill_DTO> bills = new ArrayList<>();
 
@@ -82,5 +84,20 @@ public class Bill_DAO {
         }
         SQLiteDBExecutor.closeConnection(conn);
         return bills;
+    }
+
+    @Override
+    public boolean add(Bill_DTO obj) {
+        throw new UnsupportedOperationException("Not supported yet."); 
+    }
+
+    @Override
+    public boolean update(Bill_DTO obj) {
+        throw new UnsupportedOperationException("Not supported yet."); 
+    }
+
+    @Override
+    public boolean delete(String uniqueProp) {
+        throw new UnsupportedOperationException("Not supported yet."); 
     }
 }
