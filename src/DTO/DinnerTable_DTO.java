@@ -12,6 +12,7 @@ import java.util.Objects;
  * @since 1.0
  */
 public class DinnerTable_DTO {
+
     private int id;
     private String name;
     private String status;
@@ -23,11 +24,21 @@ public class DinnerTable_DTO {
     }
 
     /**
+     * Constructs a DinnerTable_DTO with name.
+     *
+     * @param name dinner table 's name
+     * @see DinnerTable_DTO#DinnerTable_DTO(int, String, String) DinnerTable_DTO
+     */
+    public DinnerTable_DTO(String name) {
+        this.name = name;
+    }
+
+    /**
      * Constructs a DinnerTable_DTO without id.
      *
-     * @param name   dinner table 's name
+     * @param name dinner table 's name
      * @param status dinner table 's status
-     * @see DinnerTable_DTO#DinnerTable_DTO(int, String, String)  DinnerTable_DTO
+     * @see DinnerTable_DTO#DinnerTable_DTO(int, String, String) DinnerTable_DTO
      */
     public DinnerTable_DTO(String name, String status) {
         this.name = name;
@@ -35,10 +46,10 @@ public class DinnerTable_DTO {
     }
 
     /**
-     * Constructs a DinnerTable_DTO with id.
+     * Constructs a DinnerTable_DTO with id,name and status.
      *
-     * @param id     dinner table 's id
-     * @param name   dinner table 's name
+     * @param id dinner table 's id
+     * @param name dinner table 's name
      * @param status dinner table 's status
      */
     public DinnerTable_DTO(int id, String name, String status) {
@@ -59,8 +70,7 @@ public class DinnerTable_DTO {
     /**
      * Sets the dinner table 's id.
      *
-     * @param id An int containing the
-     *           dinner table 's id.
+     * @param id An int containing the dinner table 's id.
      */
     public void setId(int id) {
         this.id = id;
@@ -78,8 +88,7 @@ public class DinnerTable_DTO {
     /**
      * Sets the dinner table 's name.
      *
-     * @param name An int containing the
-     *             dinner table 's name.
+     * @param name An int containing the dinner table 's name.
      */
     public void setName(String name) {
         this.name = name;
@@ -97,8 +106,7 @@ public class DinnerTable_DTO {
     /**
      * Sets the dinner table 's status.
      *
-     * @param status An int containing the
-     *               dinner table 's status.
+     * @param status An int containing the dinner table 's status.
      */
     public void setStatus(String status) {
         this.status = status;
@@ -108,19 +116,24 @@ public class DinnerTable_DTO {
      * Indicates whether some other object is "equal to" this one.
      *
      * @param o the reference object with which to compare.
-     * @return true if this object is the same as the dinner table obj argument; false otherwise.
+     * @return true if this object is the same as the dinner table obj argument;
+     * false otherwise.
      */
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof DinnerTable_DTO)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof DinnerTable_DTO)) {
+            return false;
+        }
         DinnerTable_DTO that = (DinnerTable_DTO) o;
         return name.equals(that.name) && status.equals(that.status);
     }
 
     /**
-     * Returns a hash code value for the object.
-     * This method is supported for the benefit of hash tables such as those provided by HashMap.
+     * Returns a hash code value for the object. This method is supported for
+     * the benefit of hash tables such as those provided by HashMap.
      *
      * @return a hash code value for this object.
      */

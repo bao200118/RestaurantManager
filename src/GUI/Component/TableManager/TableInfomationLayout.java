@@ -369,7 +369,7 @@ public class TableInfomationLayout extends JPanel {
     }
 
     private void btnDeleteTableGroupActionPerformed(ActionEvent evt) {
-        DinnerTable_BUS.deleteTableInfo(Integer.parseInt(tfTableID.getText()));
+        DinnerTable_BUS.deleteTableInfo(tfTableID.getText());
         DinnerTable_BUS.getAllTableInfo((DefaultTableModel) tbTable.getModel());
     }
     
