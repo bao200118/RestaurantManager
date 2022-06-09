@@ -138,7 +138,8 @@ public class SQLiteDBExecutor {
                                              Object parameter) throws SQLException {
         if (preparedStatement == null) return;
         if (Integer.class.equals(parameter.getClass())) preparedStatement.setInt(index, (Integer) parameter);
-        else if (String.class.equals(parameter.getClass())) preparedStatement.setString(index, (String) parameter);
+        else if (String.class.equals(parameter.getClass())) preparedStatement.setString(index, (String) parameter);        
+        else if (Double.class.equals(parameter.getClass())) preparedStatement.setDouble(index, (Double) parameter);
         else if (byte[].class.equals(parameter.getClass())) preparedStatement.setBytes(index, (byte[]) parameter);
     }
 }
