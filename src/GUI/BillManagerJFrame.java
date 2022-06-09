@@ -226,7 +226,7 @@ public class BillManagerJFrame extends JPanel{
     } 
     
     private void btnShowAllActionPerformed(ActionEvent evt) {  
-        
+        Bill_BUS.getAllBills((DefaultTableModel) tbBills.getModel());
     } 
     
     @Override
