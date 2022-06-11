@@ -110,13 +110,12 @@ public class OrderBill_DAO implements IOrderBill_DAO {
     /**
      * Delete all order bill detail in table
      *
-     * @param id table id
+     * @param id order bill id
      * @return A Boolean true if success, otherwise false
      */
     @Override
     public boolean deleteAllBillDetail(int id) {
-        String sqlStatement = "Delete from HoaDonInfo where HoaDonInfo.IDHoaDon = ("
-                + "Select HoaDon.ID from BanAn,HoaDon where HoaDon.IDBan = ? AND TinhTrang = 0)";
+        String sqlStatement = "Delete from HoaDonInfo where HoaDonInfo.IDHoaDon = ?";
         conn = SQLiteDBExecutor.connect();
 
         boolean isSuccess = SQLiteDBExecutor.executeNonQuery(sqlStatement, conn, id);
@@ -129,7 +128,7 @@ public class OrderBill_DAO implements IOrderBill_DAO {
     /**
      * Check out table bill
      *
-     * @param orderBill Order bill of table
+     * @param orderBill Order bill of table must contain checkoutDate,total,id table
      * @return A Boolean true if success, otherwise false
      */
     @Override
@@ -168,7 +167,7 @@ public class OrderBill_DAO implements IOrderBill_DAO {
     /**
      * Update amount of food in order detail
      *
-     * @param orderDetail Order food detail
+     * @param orderDetail Order food detail must contain orderBill id, amount and food id
      * @return A Boolean true if success, otherwise false
      */
     @Override
@@ -187,7 +186,7 @@ public class OrderBill_DAO implements IOrderBill_DAO {
     /**
      * Delete order detail
      *
-     * @param orderDetail Order food detail
+     * @param orderDetail Order food detail must contain order bill id and food id
      * @return A Boolean true if success, otherwise false
      */
     @Override
@@ -196,7 +195,7 @@ public class OrderBill_DAO implements IOrderBill_DAO {
         conn = SQLiteDBExecutor.connect();
 
         boolean isSuccess = SQLiteDBExecutor.executeNonQuery(sqlStatement, conn,
-                orderDetail.getId(), orderDetail.getId());
+                orderDetail.getId(), orderDetail.getIdFood());
 
         SQLiteDBExecutor.closeConnection(conn);
 

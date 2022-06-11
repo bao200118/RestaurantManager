@@ -2,6 +2,7 @@
 package BUS;
 
 import DAO.Food_DAO;
+import DAO.Interface.IFood_DAO;
 import Utils.ImageUtils;
 import DTO.Food_DTO;
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ import javax.swing.table.DefaultTableModel;
  * @author macbookpro
  */
 public class Food_BUS {
-    static Food_DAO food_DAO = new Food_DAO() {};
+    static IFood_DAO food_DAO = new Food_DAO() {};
 
     public static void getAllFoods(DefaultTableModel tableModel) {
         tableModel.setRowCount(0);
@@ -23,6 +24,10 @@ public class Food_BUS {
             ImageIcon icon = ImageUtils.convertByteArrayToImageIcon(food.getImage());
             tableModel.addRow(new Object[]{food.getId(), food.getFoodGroupName(),food.getName(), food.getUnit(), food.getPrice(), icon});
         }
+    }
+    
+    public static ArrayList<Food_DTO> getAllFoods() {
+        return food_DAO.getAll();
     }
     
     public static Food_DTO getFoodByName(String foodName) {
@@ -120,5 +125,9 @@ public class Food_BUS {
             ImageIcon icon = ImageUtils.convertByteArrayToImageIcon(food.getImage());
             tableModel.addRow(new Object[]{food.getId(), food.getFoodGroupName(),food.getName(), food.getUnit(), food.getPrice(), icon});
         }
+    }
+    
+    public static ArrayList<Food_DTO> findFoodsByGroupName(String groupName) {
+        return food_DAO.findFoodsByGroupName(groupName);
     }
 }

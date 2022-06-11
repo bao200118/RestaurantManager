@@ -2,6 +2,7 @@
 package BUS;
 
 import DAO.BillDetail_DAO;
+import DAO.Interface.IBillDetail_DAO;
 import DTO.BillDetail_DTO;
 import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
@@ -11,7 +12,7 @@ import javax.swing.table.DefaultTableModel;
  * @author macbookpro
  */
 public class BillDetail_BUS {
-    static BillDetail_DAO billDetail_DAO = new BillDetail_DAO();
+    static IBillDetail_DAO billDetail_DAO = new BillDetail_DAO();
     
     public static ArrayList<BillDetail_DTO> loadBillDetailByTableId(DefaultTableModel tableModel, int tableId) {
         tableModel.setRowCount(0);
