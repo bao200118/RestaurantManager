@@ -20,8 +20,10 @@ public class TableItemUI {
         List<DinnerTable_DTO> dinnerTableInfoList = dinnerTable_DAO.getAll();
         List<TableModelItemUI> tableUIList = new ArrayList<>();
         for (DinnerTable_DTO dinnerTableInfo : dinnerTableInfoList) {
+            System.out.println(dinnerTableInfo.getStatus());
             tableUIList.add(new TableModelItemUI(dinnerTableInfo.getId(), dinnerTableInfo.getName(), dinnerTableInfo.getStatus()));
         }
+        System.out.println("______________________________________________________");
         return tableUIList;
     }
 }
