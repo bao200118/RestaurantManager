@@ -92,4 +92,12 @@ public class DinnerTable_BUS {
                 dinnerTable.getName(), dinnerTable.getStatus()});
         }
     }
+    
+    public static boolean setStatusOccupied(int id) {
+        return dinnerTable_DAO.setStatusOccupied(id);
+    }
+    
+    public static boolean setStatusEmpty(int id) {
+        return dinnerTable_DAO.setStatusEmpty(id);
+    }
 }
