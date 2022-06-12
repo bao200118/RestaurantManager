@@ -13,7 +13,7 @@ import java.util.ArrayList;
  *
  * @author bao20
  */
-public interface IOrderBill_DAO extends DAO<OrderBill_DTO>{
+public interface IOrderBill_DAO extends DAO<OrderBill_DTO> {
 
     /**
      * Get food order of table by table id
@@ -54,6 +54,7 @@ public interface IOrderBill_DAO extends DAO<OrderBill_DTO>{
      * @return A Boolean true if success, otherwise false
      */
     public boolean checkoutBill(OrderBill_DTO orderBill);
+
     /**
      * Add order food detail to database
      *
@@ -105,17 +106,24 @@ public interface IOrderBill_DAO extends DAO<OrderBill_DTO>{
     /**
      * Statistic income of each year
      *
-     * @param year start year to statistic
-     * @param yearStep step of year for statistic
      * @return A list of total income each year
      */
-    public ArrayList<Statistic_DTO> statisticIncomeByYear(String year, int yearStep);
+    public ArrayList<Statistic_DTO> statisticIncomeByYear();
 
     /**
      * Statistic income in today
      *
-     * @param date
+     * @param date date format dd/MM/YYYY
      * @return A list of income in date
      */
-    public ArrayList<Statistic_DTO> statisticIncomeInDay(String date);
+    public Statistic_DTO statisticIncomeInDay(String date);
+
+    /**
+     * Statistic income by date
+     *
+     * @param fromDate from date format dd/MM/YYYY
+     * @param toDate to date format dd/MM/YYYY
+     * @return A list of income in date
+     */
+    public ArrayList<Statistic_DTO> statisticIncomeByDate(String fromDate, String toDate);
 }

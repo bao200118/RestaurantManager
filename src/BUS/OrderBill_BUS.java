@@ -1,6 +1,5 @@
 package BUS;
 
-
 import DAO.Interface.IOrderBill_DAO;
 import DAO.OrderBill_DAO;
 import DAO.SQLiteDBExecutor;
@@ -70,8 +69,8 @@ public class OrderBill_BUS {
      * @return A Boolean true if success, otherwise false
      */
     public static boolean checkoutBill(OrderBill_DTO orderBill) {
-        return orderBill_DAO.checkoutBill(orderBill) 
-                && orderBill_DAO.deleteAllBillDetail(orderBill.getId()) 
+        return orderBill_DAO.checkoutBill(orderBill)
+                && orderBill_DAO.deleteAllBillDetail(orderBill.getId())
                 && DinnerTable_BUS.setStatusEmpty(orderBill.getIdTable());
     }
 
@@ -157,21 +156,30 @@ public class OrderBill_BUS {
     /**
      * Statistic income of each year
      *
-     * @param year start year to statistic
-     * @param yearStep step of year for statistic
      * @return A list of total income each year
      */
-    public static ArrayList<Statistic_DTO> statisticIncomeByYear(String year, int yearStep) {
-        return orderBill_DAO.statisticIncomeByYear(year, yearStep);
+    public static ArrayList<Statistic_DTO> statisticIncomeByYear() {
+        return orderBill_DAO.statisticIncomeByYear();
+    }
+
+    /**
+     * Statistic income by date
+     *
+     * @param fromDate from date format dd/MM/YYYY
+     * @param toDate to date format dd/MM/YYYY
+     * @return A list of income in date
+     */
+    public static ArrayList<Statistic_DTO> statisticIncomeByDate(String fromDate, String toDate) {
+        return orderBill_DAO.statisticIncomeByDate(fromDate, toDate);
     }
 
     /**
      * Statistic income in today
      *
-     * @param date
+     * @param date date format dd/MM/YYYY
      * @return A list of income in date
      */
-    public static ArrayList<Statistic_DTO> statisticIncomeInDay(String date) {
+    public static Statistic_DTO statisticIncomeInDay(String date) {
         return orderBill_DAO.statisticIncomeInDay(date);
     }
 }
