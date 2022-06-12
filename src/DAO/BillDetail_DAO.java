@@ -26,7 +26,7 @@ public class BillDetail_DAO implements IBillDetail_DAO{
 
         ArrayList<BillDetail_DTO> billDetails = new ArrayList<>();
 
-        String sqlStatement = "select HoaDonInFo.ID,MonAn.TenMonAn,HoaDonInFo.SoLuong,MonAn.Gia, (HoaDonInFo.SoLuong * MonAn.Gia) as ThanhTien from BanAn, HoaDon, MonAn, HoaDonInFo where HoaDonInFo.IDMonAn = MonAn.ID AND HoaDonInFo.IDHoaDon = HoaDon.ID and HoaDon.IDBan = BanAn.ID AND BanAn.ID = ?";
+        String sqlStatement = "select HoaDonInFo.ID,HoaDonInfo.IDMonAn, MonAn.TenMonAn,HoaDonInFo.SoLuong,MonAn.Gia, (HoaDonInFo.SoLuong * MonAn.Gia) as ThanhTien from BanAn, HoaDon, MonAn, HoaDonInFo where HoaDonInFo.IDMonAn = MonAn.ID AND HoaDonInFo.IDHoaDon = HoaDon.ID and HoaDon.IDBan = BanAn.ID AND BanAn.ID = ?";
         conn = SQLiteDBExecutor.connect();
         ResultSet rs = SQLiteDBExecutor.executeQuery(sqlStatement, conn, tableId);
 
@@ -35,6 +35,7 @@ public class BillDetail_DAO implements IBillDetail_DAO{
                
                 BillDetail_DTO billDetail = new BillDetail_DTO(
                         rs.getInt("ID"),
+                        rs.getInt("IDMonAn"),
                         rs.getString("TenMonAn"),
                         rs.getInt("SoLuong"),
                         rs.getInt("Gia"),

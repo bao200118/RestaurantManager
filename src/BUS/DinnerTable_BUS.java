@@ -94,7 +94,7 @@ public class DinnerTable_BUS {
     }
     
     public static boolean setStatusOccupied(int id) {
-        return dinnerTable_DAO.setStatusOccupied(id);
+        return dinnerTable_DAO.setStatusOccupied(id) && OrderBill_BUS.add(id);
     }
     
     public static boolean setStatusEmpty(int id) {

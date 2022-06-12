@@ -18,6 +18,9 @@ public class OrderDetail_DTO {
     private double price;
     private double total;
 
+    /**
+     *@see OrderBill_DTO#OrderBill_DTO(int, String, int, double) OrderBill_DTO
+     */
     public OrderDetail_DTO() {
     }
 
