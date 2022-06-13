@@ -559,10 +559,7 @@ public class FoodInfoListLayout extends JPanel{
             }      
             
             int price = "".equals(tfPrice.getText()) ? -1 : Integer.valueOf(tfPrice.getText());
-            Food_BUS.addFood(new Food_DTO(image, cbFoodGroup.getSelectedItem().toString(), tfFoodName.getText(), tfUnit.getText(), price));
-            
-            System.out.println(image + " " + cbFoodGroup.getSelectedItem().toString() + " " + tfFoodName.getText() + " " + tfUnit.getText() + " " + price);
-            
+            Food_BUS.addFood(new Food_DTO(image, cbFoodGroup.getSelectedItem().toString(), tfFoodName.getText(), tfUnit.getText(), price));                    
             
             Food_BUS.getAllFoods((DefaultTableModel) tbFoodInfoList.getModel());
             if ("".equals(tfFoodName.getText()) || "".equals(tfUnit.getText()) || "".equals(tfPrice.getText()) || imageFile == null) {
@@ -583,6 +580,7 @@ public class FoodInfoListLayout extends JPanel{
             int price = "".equals(tfPrice.getText()) ? -1 : Integer.valueOf(tfPrice.getText());
             Food_BUS.updateFood(new Food_DTO(foodId, image, cbFoodGroup.getSelectedItem().toString(), tfFoodName.getText(), tfUnit.getText(), price));
             Food_BUS.getAllFoods((DefaultTableModel) tbFoodInfoList.getModel());
+            clearData();
         } else {
             JOptionPane.showMessageDialog(null, "Vui lòng chọn món ăn cần cập nhật", "Cập nhật món ăn",
                     JOptionPane.WARNING_MESSAGE);

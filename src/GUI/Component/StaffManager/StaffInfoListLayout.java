@@ -1,8 +1,17 @@
 
 package GUI.Component.StaffManager;
 
+import BUS.Account_BUS;
+import BUS.Food_BUS;
+import BUS.Staff_BUS;
+import DTO.Account_DTO;
+import DTO.Food_DTO;
+import DTO.Staff_DTO;
 import GUI.Component.RoundedButton;
 import GUI.Component.RoundedTextField;
+import Interface.EventTextChange;
+import Utils.DateUtils;
+import Utils.ImageUtils;
 import com.toedter.calendar.JDateChooser;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -17,28 +26,32 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.Date;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.table.DefaultTableModel;
 
 public class StaffInfoListLayout extends JPanel{
     private final Dimension dimension;
-    String[][] staffs = {
-        { "NV001", "Nguyễn Văn A", "12/05/1999", "Nam", "0123456789", "Nhân viên bán hàng", "10000000", "abcdef" },
-        { "NV002", "Nguyễn Văn B", "12/05/1999", "Nam", "0123456789", "Nhân viên bán hàng", "10000000", "abcdef" }
-    };
     String[] properties = { "Mã nhân viên ", "Tên nhân viên", "Ngày sinh", "Giới tính", "Số điện thoại", "Chức vụ", "Lương", "Địa chỉ"};
-
+    ArrayList<Integer> IDs = new ArrayList<>();
+    
     public StaffInfoListLayout(Dimension dimension) {
         this.dimension = dimension;
         initComponents();
@@ -49,12 +62,13 @@ public class StaffInfoListLayout extends JPanel{
         int bodyWidth = dimension.width;
         int bodyHeight = dimension.height - dimension.height / 22 - 10;
         
+        dateUtils = new DateUtils();
         tfFullName = new RoundedTextField();
         cbPositionType = new JComboBox<>();
         dtpDateOfBirth = new JDateChooser();
         tfPosition = new RoundedTextField();
         tfPhoneNumber = new RoundedTextField();
-        tfWage = new RoundedTextField();
+        tfSalary = new RoundedTextField();
         rbMaleGender = new JRadioButton();
         rbFemaleGender = new JRadioButton();
         taAddress = new JTextArea();
@@ -62,7 +76,20 @@ public class StaffInfoListLayout extends JPanel{
         btnAddStaff = new RoundedButton();
         btnUpdateStaff = new RoundedButton();
         btnDeleteStaff = new RoundedButton();
-        tbStaffInfo = new JTable(staffs, properties);
+        dtmTableModel = new DefaultTableModel(properties, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                //all cells false
+                return false;
+            }
+        };
+        tbStaffInfo = new JTable(dtmTableModel);
+        tbStaffInfo.getSelectionModel().addListSelectionListener((e) -> {
+            rowSelectedListener(e);
+        });
+        
+        Staff_BUS.getAllStaff(dtmTableModel);
+        IDs = Staff_BUS.getAllStaffID();
         
         /**
          * info Staff Form Layout
@@ -122,7 +149,7 @@ public class StaffInfoListLayout extends JPanel{
         gbc.insets = new Insets(20, 0, 25, 0);
         gbc.anchor = GridBagConstraints.WEST;
 
-        cbPositionType.setModel(new DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cbPositionType.setModel(new DefaultComboBoxModel<>(new String[] { "Nhân viên", "Quản lý" }));
         cbPositionType.setFocusable(false);
         cbPositionType.setPreferredSize(new Dimension((int) (bodyWidth / 3.5) , 35));
         cbPositionType.setFont(new java.awt.Font("sansserif", 0, 14));
@@ -147,6 +174,8 @@ public class StaffInfoListLayout extends JPanel{
         gbc.anchor = GridBagConstraints.WEST;
 
         dtpDateOfBirth.setFocusable(false);
+        dtpDateOfBirth.setDateFormatString("dd/MM/yyyy");
+        dtpDateOfBirth.setDate(new Date());
         dtpDateOfBirth.setPreferredSize(new Dimension((int) (bodyWidth / 3.5) , 35));
         dtpDateOfBirth.setFont(new java.awt.Font("sansserif", 0, 14));
         infoStaffFormLayout.add(dtpDateOfBirth, gbc);
@@ -219,13 +248,13 @@ public class StaffInfoListLayout extends JPanel{
         gbc.insets = new Insets(0, 0, 25, 0);
         gbc.anchor = GridBagConstraints.WEST;
         
-        tfWage.setBorderColor(new java.awt.Color(204, 204, 204));
-        tfWage.setBorderWidth(1);
-        tfWage.setHintText("");
-        tfWage.setMargin(new java.awt.Insets(2, 10, 2, 6));
-        tfWage.setRound(20);
-        tfWage.setPreferredSize(new Dimension((int) (bodyWidth / 3.5) , 35));      
-        infoStaffFormLayout.add(tfWage, gbc);
+        tfSalary.setBorderColor(new java.awt.Color(204, 204, 204));
+        tfSalary.setBorderWidth(1);
+        tfSalary.setHintText("");
+        tfSalary.setMargin(new java.awt.Insets(2, 10, 2, 6));
+        tfSalary.setRound(20);
+        tfSalary.setPreferredSize(new Dimension((int) (bodyWidth / 3.5) , 35));      
+        infoStaffFormLayout.add(tfSalary, gbc);
         
         // label Giới tính
         gbc.gridx = 0;
@@ -253,6 +282,7 @@ public class StaffInfoListLayout extends JPanel{
         ButtonGroup btnGroupSex = new ButtonGroup();
         
         rbMaleGender.setText("Nam");
+        rbMaleGender.setSelected(true);
         rbMaleGender.setFont(new Font("sansserif", 0, 15));
         rbMaleGender.setForeground(Color.BLACK);
         gbcSex.gridx = 0;
@@ -331,7 +361,10 @@ public class StaffInfoListLayout extends JPanel{
         tfSearch.setHintText("Nhập tên cần tìm ...");
         tfSearch.setMargin(new java.awt.Insets(2, 10, 2, 6));
         tfSearch.setRound(20);
-        tfSearch.setPreferredSize(new Dimension((int) (bodyWidth / 3.5) , 35));
+        tfSearch.setPreferredSize(new Dimension((int) (bodyWidth / 3.5) , 35));       
+        tfSearch.getDocument().addDocumentListener((EventTextChange) (DocumentEvent evt) -> {
+            tfSearchTextChangeActionPerformed(evt);
+        });
         
         businessLayout.add(tfSearch, gbcBusiness);
         
@@ -426,7 +459,6 @@ public class StaffInfoListLayout extends JPanel{
         tableLayout.setPreferredSize(new Dimension(bodyWidth, (int) (bodyHeight - bodyHeight / 2 - bodyHeight / 10)));
         tableLayout.setLayout(new BorderLayout());
          
-        tbStaffInfo.setPreferredSize(new Dimension(bodyWidth, (int) (bodyHeight - bodyHeight / 2 - bodyHeight / 10)));
         tbStaffInfo.setFocusable(false);
         tbStaffInfo.setIntercellSpacing(new Dimension(0, 0));
         tbStaffInfo.setRowHeight(33);
@@ -448,7 +480,9 @@ public class StaffInfoListLayout extends JPanel{
        
         JScrollPane jsp = new JScrollPane(tbStaffInfo);
         tableLayout.setLayout(new BorderLayout());
-        jsp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+        JScrollBar bar = jsp.getVerticalScrollBar();
+        bar.setPreferredSize(new Dimension(7, 0));
+        jsp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 
         tableLayout.add(jsp, BorderLayout.CENTER);
                
@@ -459,17 +493,131 @@ public class StaffInfoListLayout extends JPanel{
         add(tableLayout, BorderLayout.SOUTH);   
     }
     
-    private void btnAddStaffActionPerformed(ActionEvent evt) {  
-
+    private String staffID = "";
+    private final int STAFF_ID_ROW = 0;
+    private final int STAFF_NAME_ROW = 1;
+    private final int STAFF_DATE_OF_BIRTH_ROW = 2;
+    private final int STAFF_SEX_ROW = 3;
+    private final int STAFF_PHONE_NUMBER_ROW = 4;
+    private final int STAFF_POSITION_ROW = 5;
+    private final int STAFF_SALARY_ROW = 6;
+    private final int STAFF_ADDRESS_ROW = 7;
+    
+    private void rowSelectedListener(ListSelectionEvent event) {
+        if (!event.getValueIsAdjusting()) {
+            int selectedRow = tbStaffInfo.getSelectedRow();
+            if (selectedRow != -1) {
+                staffID = tbStaffInfo.getValueAt(selectedRow, STAFF_ID_ROW).toString();
+                tfFullName.setText(tbStaffInfo.getValueAt(selectedRow, STAFF_NAME_ROW).toString());
+                dtpDateOfBirth.setDate(dateUtils.convertStringToDate(tbStaffInfo.getValueAt(selectedRow, STAFF_DATE_OF_BIRTH_ROW).toString()));
+                if ("Nam".equals(tbStaffInfo.getValueAt(selectedRow, STAFF_SEX_ROW).toString())) {
+                    rbMaleGender.setSelected(true);
+                } else {
+                    rbFemaleGender.setSelected(true);
+                }
+                
+                tfPhoneNumber.setText(tbStaffInfo.getValueAt(selectedRow, STAFF_PHONE_NUMBER_ROW).toString());
+                tfPosition.setText(tbStaffInfo.getValueAt(selectedRow, STAFF_POSITION_ROW).toString());
+                tfSalary.setText(tbStaffInfo.getValueAt(selectedRow, STAFF_SALARY_ROW).toString());
+                taAddress.setText(tbStaffInfo.getValueAt(selectedRow, STAFF_ADDRESS_ROW).toString());
+                
+            }
+        }
+    }
+    
+    private void loadStaff() {
+        Staff_BUS.getAllStaff((DefaultTableModel) tbStaffInfo.getModel());
+        IDs.clear();
+        IDs = Staff_BUS.getAllStaffID();
+    }
+    
+    private void btnAddStaffActionPerformed(ActionEvent evt) {
+        Staff_DTO newStaff = new Staff_DTO(autoCreateNewStaffID(), tfFullName.getText(), dateUtils.formatDate(dtpDateOfBirth.getDate()), getStaffSex(), tfPhoneNumber.getText(), tfPosition.getText(), tfSalary.getText(), taAddress.getText());
+        
+        Staff_BUS.addStaff(newStaff, cbPositionType.getSelectedItem().toString());
+        
+        loadStaff();
+        
+        if ("".equals(tfFullName.getText()) || "".equals(tfPhoneNumber.getText()) || "".equals(tfPosition.getText()) || "".equals(tfSalary.getText()) || "".equals(taAddress.getText())) {
+            // Vẫn còn thuộc tính chưa điền
+        } else {
+            // add food to db and clear data form
+            clearData();
+        }
     } 
     
     private void btnUpdateStaffActionPerformed(ActionEvent evt) {  
-
+        Staff_DTO staff = Staff_BUS.getStaffById(staffID);
+        
+        if (staff != null) {
+            
+            Staff_DTO staffUpdate = new Staff_DTO(staff.getStaffID(), tfFullName.getText(), dateUtils.formatDate(dtpDateOfBirth.getDate()), getStaffSex(), tfPhoneNumber.getText(), tfPosition.getText(), tfSalary.getText(), taAddress.getText());
+            Staff_BUS.updateStaff(staffUpdate);
+            loadStaff();
+            clearData();
+            
+        } else {
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn nhân viên cần cập nhật", "Cập nhật nhân viên",
+                    JOptionPane.WARNING_MESSAGE);
+        }
     } 
     
     private void btnDeleteStaffActionPerformed(ActionEvent evt) {  
-
+        Staff_BUS.deleteStaff(staffID);
+        loadStaff();
+        clearData();
     } 
+    
+    private void tfSearchTextChangeActionPerformed(DocumentEvent evt) {
+        Staff_BUS.findStaffsByName((DefaultTableModel) tbStaffInfo.getModel(), tfSearch.getText());
+    }
+    
+    private String autoCreateNewStaffID() {
+        if (!IDs.contains(1)) {
+            return createStaffID(1);
+        } else {
+            for (int i = 0; i < IDs.size() - 1; i++) {
+                if (IDs.get(i) + 1 != IDs.get(i + 1)) {
+                        return createStaffID((IDs.get(i) + 1));
+                }
+            }
+            return createStaffID((IDs.get(IDs.size() - 1) + 1));
+        }
+    }
+    
+    private String createStaffID(int staffID) {
+            String tempString;
+            tempString = String.valueOf(staffID);
+            while (tempString.length() < 3){
+                tempString = tempString.substring(0,0) + '0' + tempString.substring(0);
+            }
+            System.out.println(cbPositionType.getSelectedItem().toString());
+            if ("Nhân viên".equals(cbPositionType.getSelectedItem().toString())) {
+                
+                tempString = "NV" + tempString;
+            } else { 
+                tempString = "QL" + tempString;
+            }
+            return tempString;
+    }
+    
+    private String getStaffSex() {
+        if (rbMaleGender.isSelected()){
+            return "Nam";
+        }
+        return "Nữ";
+    }
+    
+    private void clearData() {
+        staffID = "";
+        tfFullName.setText("");
+        dtpDateOfBirth.setDate(new Date());
+        tfPhoneNumber.setText("");   
+        rbMaleGender.setSelected(true);
+        tfPosition.setText("");
+        tfSalary.setText("");
+        taAddress.setText("");
+    }
     
     @Override
     protected void paintComponent(Graphics graphics) {
@@ -487,7 +635,7 @@ public class StaffInfoListLayout extends JPanel{
     private com.toedter.calendar.JDateChooser dtpDateOfBirth;
     private GUI.Component.RoundedTextField tfPosition;
     private GUI.Component.RoundedTextField tfPhoneNumber;
-    private GUI.Component.RoundedTextField tfWage;
+    private GUI.Component.RoundedTextField tfSalary;
     private javax.swing.JRadioButton rbMaleGender;
     private javax.swing.JRadioButton rbFemaleGender;
     private javax.swing.JTextArea taAddress;
@@ -496,5 +644,7 @@ public class StaffInfoListLayout extends JPanel{
     private GUI.Component.RoundedButton btnUpdateStaff;
     private GUI.Component.RoundedButton btnDeleteStaff;
     private javax.swing.JTable tbStaffInfo;
+    private javax.swing.table.DefaultTableModel dtmTableModel;
+    private Utils.DateUtils dateUtils;
     // nd of variables declaration 
 }

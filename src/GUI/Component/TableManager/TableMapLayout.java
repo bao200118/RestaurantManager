@@ -877,6 +877,25 @@ public class TableMapLayout extends JPanel {
         return btnFoodGroup;
     }
 
+    private void LoadTabel() {
+        List<TableModelItemUI> tables = TableItemUI.getAllTableDinnerUI();
+        int widthGridviewTableItem = dimension.width - dimension.width / 3 - 5;
+        bodyLayout.removeAll();
+        for (int i = 0; i <= tables.size() - 1; i++) {
+            final int indexTemp = i;
+            TableItem tableItem = new TableItem(new ImageIcon(getClass().getResource("Trống".equals(tables.get(i).getStatus()) ? "/assets/ic_tableware.png" : "/assets/ic_tableware_selected.png")), tables.get(i).getName());
+            tableItem.setPreferredSize(new Dimension((int) (widthGridviewTableItem / 5.4), (int) (widthGridviewTableItem / 5)));
+            tableItem.addMouseListener(new java.awt.event.MouseAdapter() {
+                @Override
+                public void mouseClicked(java.awt.event.MouseEvent evt) {
+                    indexTable = tables.get(indexTemp).getiD();
+                    tableItemMouseClicked(evt);
+                }
+            });
+            bodyLayout.add(tableItem);
+        }
+    }
+
     // Variables declaration - do not modify   
     private javax.swing.JPanel billByTable;
     private javax.swing.JPanel gridviewTableItem;
