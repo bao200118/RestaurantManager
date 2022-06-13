@@ -2,6 +2,7 @@
 package BUS;
 
 import DAO.Food_DAO;
+import DAO.Interface.IFood_DAO;
 import Utils.ImageUtils;
 import DTO.Food_DTO;
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ import javax.swing.table.DefaultTableModel;
  * @author macbookpro
  */
 public class Food_BUS {
-    static Food_DAO food_DAO = new Food_DAO() {};
+    static IFood_DAO food_DAO = new Food_DAO() {};
 
     public static void getAllFoods(DefaultTableModel tableModel) {
         tableModel.setRowCount(0);

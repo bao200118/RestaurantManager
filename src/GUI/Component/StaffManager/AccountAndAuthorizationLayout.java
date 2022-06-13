@@ -1,5 +1,7 @@
 package GUI.Component.StaffManager;
 
+import BUS.Account_BUS;
+import BUS.Staff_BUS;
 import GUI.Component.RoundedButton;
 import GUI.Component.RoundedTextField;
 import java.awt.BorderLayout;
@@ -16,23 +18,20 @@ import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import javax.swing.BorderFactory;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.table.DefaultTableModel;
 
 public class AccountAndAuthorizationLayout extends JPanel{
     private final Dimension dimension;
     
-    String[][] foodGroups = {
-        { "NV001", "123456", "Quản lý" },
-        { "NV002", "234567", "Nhân viên" }
-    };
     String[] properties = { "Tài khoản ", "Mật khẩu", "Quyền đăng nhập"};
 
 
@@ -51,9 +50,19 @@ public class AccountAndAuthorizationLayout extends JPanel{
        tfPassword = new RoundedTextField();
        tfSearch = new RoundedTextField();
        btnUpdateAccount = new RoundedButton();
-       tbAccount = new JTable(foodGroups, properties);
-       cbAuthorization = new JComboBox<>();
-       
+       dtmTableModel = new DefaultTableModel(properties, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                //all cells false
+                return false;
+            }
+        };
+        tbAccount = new JTable(dtmTableModel);
+        tbAccount.getSelectionModel().addListSelectionListener((e) -> {
+            rowSelectedListener(e);
+        });
+
+        Account_BUS.getAllAccount(dtmTableModel);
         /**
          * info Staff Form Layout
          */
@@ -94,6 +103,8 @@ public class AccountAndAuthorizationLayout extends JPanel{
         tfUserName.setBorderColor(new java.awt.Color(204, 204, 204));
         tfUserName.setBorderWidth(1);
         tfUserName.setHintText("");
+        tfUserName.setEditable(false);
+        tfUserName.setBackground(new Color(235, 238, 242));
         tfUserName.setMargin(new java.awt.Insets(2, 10, 2, 6));
         tfUserName.setRound(20);
         tfUserName.setPreferredSize(new Dimension((int) (width / 3.5) , 35));
@@ -125,28 +136,7 @@ public class AccountAndAuthorizationLayout extends JPanel{
         tfPassword.setPreferredSize(new Dimension((int) (width / 3.5) , 35));
         
         infoAccountFormLayout.add(tfPassword, gbc);
-        
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        gbc.insets = new Insets(0, 0, 0, 20);
-        gbc.anchor = GridBagConstraints.EAST;
-        JLabel lbTextPositionType = new JLabel("Loại chức vụ");
-        lbTextPositionType.setFont(new Font("sansserif", 0, 15));
-        lbTextPositionType.setForeground(Color.BLACK);
-        infoAccountFormLayout.add(lbTextPositionType, gbc);
-       
-        gbc.gridx = 1;
-        gbc.gridy = 2;
-        gbc.insets = new Insets(0, 0, 0, 0);
-        gbc.anchor = GridBagConstraints.WEST;
-
-        cbAuthorization.setModel(new DefaultComboBoxModel<>(new String[] { "Nhân viên", "Quản lý" }));
-        cbAuthorization.setFocusable(false);
-        cbAuthorization.setPreferredSize(new Dimension((int) (width / 3.5) , 35));
-        cbAuthorization.setFont(new java.awt.Font("sansserif", 0, 14));
-        
-        infoAccountFormLayout.add(cbAuthorization, gbc);
-        
+                        
         /**
          * Business Layout
          */
@@ -174,7 +164,7 @@ public class AccountAndAuthorizationLayout extends JPanel{
         
         tfSearch.setBorderColor(new java.awt.Color(204, 204, 204));
         tfSearch.setBorderWidth(1);
-        tfSearch.setHintText("Nhập tên cần tìm ...");
+        tfSearch.setHintText("Nhập tên tài khoản cần tìm ...");
         tfSearch.setMargin(new java.awt.Insets(2, 10, 2, 6));
         tfSearch.setRound(20);
         tfSearch.setPreferredSize(new Dimension((int) (width / 3.5) , 35));
@@ -214,7 +204,7 @@ public class AccountAndAuthorizationLayout extends JPanel{
          * Table Staff Layout
          */
         JPanel tableLayout = new JPanel();
-        tableLayout.setPreferredSize(new Dimension(width, (int) (height - height/3 - height / 10)));
+        tableLayout.setPreferredSize(new Dimension(width, (int) (height - height/3 - height / 10 - 10)));
         tableLayout.setLayout(new BorderLayout());
          
 //        tbFoodInfoList.setPreferredSize(new Dimension(bodyWidth, (int) (bodyHeight - bodyHeight / 2 - bodyHeight / 10)));
@@ -239,7 +229,9 @@ public class AccountAndAuthorizationLayout extends JPanel{
        
         JScrollPane jsp = new JScrollPane(tbAccount);
         tableLayout.setLayout(new BorderLayout());
-        jsp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+        JScrollBar bar = jsp.getVerticalScrollBar();
+        bar.setPreferredSize(new Dimension(7, 0));
+        jsp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 
         tableLayout.add(jsp, BorderLayout.CENTER);
        
@@ -247,6 +239,19 @@ public class AccountAndAuthorizationLayout extends JPanel{
         add(infoAccountFormLayout);
         add(businessLayout);
         add(tableLayout);
+    }
+    
+    private final int ACCOUNT_USERNAME_ROW = 0;
+    private final int ACCOUNT_PASSWORD_ROW = 1;
+    
+    private void rowSelectedListener(ListSelectionEvent event) {
+        if (!event.getValueIsAdjusting()) {
+            int selectedRow = tbAccount.getSelectedRow();
+            if (selectedRow != -1) {
+                tfUserName.setText(tbAccount.getValueAt(selectedRow, ACCOUNT_USERNAME_ROW).toString());
+                tfPassword.setText(tbAccount.getValueAt(selectedRow, ACCOUNT_PASSWORD_ROW).toString());         
+            }
+        }
     }
     
     private void btnUpdateAccountActionPerformed(ActionEvent evt) {  
@@ -259,6 +264,7 @@ public class AccountAndAuthorizationLayout extends JPanel{
     private GUI.Component.RoundedTextField tfSearch;
     private GUI.Component.RoundedButton btnUpdateAccount;
     private javax.swing.JTable tbAccount;
-    private javax.swing.JComboBox<String> cbAuthorization;
+    private javax.swing.table.DefaultTableModel dtmTableModel;
+
     // nd of variables declaration 
 }

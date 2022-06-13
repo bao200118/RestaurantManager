@@ -2,6 +2,7 @@
 package BUS;
 
 import DAO.Bill_DAO;
+import DAO.Interface.IBill_DAO;
 import DTO.Bill_DTO;
 import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
@@ -12,7 +13,7 @@ import javax.swing.table.DefaultTableModel;
  */
 public class Bill_BUS {
     
-    static Bill_DAO bill_DAO = new Bill_DAO();
+    static IBill_DAO bill_DAO = new Bill_DAO();
 
     public static void getAllBills(DefaultTableModel tableModel) {
         tableModel.setRowCount(0);

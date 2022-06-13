@@ -708,8 +708,6 @@ public class TableMapLayout extends JPanel {
         bodyLayout.removeAll();
         for (int i = 0; i <= tables.size() - 1; i++) {
             final int indexTemp = i;
-            System.out.println("_________________");
-            System.out.println(tables.get(i).getStatus());
             TableItem tableItem = new TableItem(new ImageIcon(getClass().getResource("Trống".equals(tables.get(i).getStatus()) ? "/assets/ic_tableware.png" : "/assets/ic_tableware_selected.png")), tables.get(i).getName());
             tableItem.setPreferredSize(new Dimension((int) (widthGridviewTableItem / 5.4), (int) (widthGridviewTableItem / 5)));
             tableItem.addMouseListener(new java.awt.event.MouseAdapter() {
