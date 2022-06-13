@@ -1,4 +1,3 @@
-
 package DAO;
 
 import static DAO.DinnerTable_DAO.conn;
@@ -12,7 +11,7 @@ import java.util.ArrayList;
  *
  * @author macbookpro
  */
-public class Account_DAO implements IAccount_DAO{
+public class Account_DAO implements IAccount_DAO {
 
     /**
      * Get all account in database
@@ -46,14 +45,45 @@ public class Account_DAO implements IAccount_DAO{
     }
 
     /**
+     * Get user by username
+     *
+     * @param name username
+     * @return Account contain username, pass, account type
+     */
+    @Override
+    public Account_DTO get(String name) {
+        String sqlStatement = "Select * From NGUOIDUNG where TaiKhoan = ? ";
+        conn = SQLiteDBExecutor.connect();
+        ResultSet rs = SQLiteDBExecutor.executeQuery(sqlStatement, conn, name);
+
+        Account_DTO account = null;
+
+        try {
+            while (rs.next()) {
+                account = new Account_DTO(
+                        rs.getString("TaiKhoan"),
+                        rs.getString("MatKhau"),
+                        rs.getString("LoaiTK")
+                );
+            }
+            rs.close();
+            rs.getStatement().close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        SQLiteDBExecutor.closeConnection(conn);
+        return account;
+    }
+
+    /**
      * Add account
      *
-     * @param account    account object
+     * @param account account object
      * @return A Boolean representing success or fail
      */
     @Override
     public boolean add(Account_DTO account) {
-         String sqlStatement = "insert into NGUOIDUNG(TaiKhoan,MatKhau,LoaiTK) values(?,?,?)";
+        String sqlStatement = "insert into NGUOIDUNG(TaiKhoan,MatKhau,LoaiTK) values(?,?,?)";
         conn = SQLiteDBExecutor.connect();
 
         boolean isSuccess = SQLiteDBExecutor.executeNonQuery(sqlStatement, conn, account.getUsername(), account.getPassword(), account.getAccountType());
@@ -67,7 +97,7 @@ public class Account_DAO implements IAccount_DAO{
     /**
      * Update account
      *
-     * @param account    account object
+     * @param account account object
      * @return A Boolean representing success or fail
      */
     @Override
@@ -82,11 +112,10 @@ public class Account_DAO implements IAccount_DAO{
         return isSuccess;
     }
 
-    
     /**
      * Delete account
      *
-     * @param username   account username
+     * @param username account username
      * @return A Boolean representing success or fail
      */
     @Override
@@ -100,5 +129,5 @@ public class Account_DAO implements IAccount_DAO{
 
         return isSuccess;
     }
-    
+
 }

@@ -1,4 +1,4 @@
-    package GUI;
+package GUI;
 
 import GUI.Component.Dashboard.DashboardLayout;
 import java.awt.Color;
@@ -8,14 +8,21 @@ import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
 public class DashboardJFrame extends JFrame {
-    
+
+    private String accountType = "NV";
+
     public DashboardJFrame() {
         initComponents();
         setLocationRelativeTo(null);
     }
 
-    Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
+    public DashboardJFrame(String accountType) {
+        this.accountType = accountType;
+        initComponents();
+        setLocationRelativeTo(null);
+    }
 
+    Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
 
     private void initComponents() {
         int width = (int) (size.width * 0.8);
@@ -27,7 +34,7 @@ public class DashboardJFrame extends JFrame {
         setBackground(new Color(0, 0, 0, 0));
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        dashboardLayout = new DashboardLayout(new Dimension(width, height));
+        dashboardLayout = new DashboardLayout(new Dimension(width, height), accountType);
 
         getContentPane().add(dashboardLayout);
 

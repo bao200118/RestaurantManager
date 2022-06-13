@@ -195,6 +195,9 @@
               <Dimension value="[30, 30]"/>
             </Property>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCloseActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="lbLogin">
           <Properties>

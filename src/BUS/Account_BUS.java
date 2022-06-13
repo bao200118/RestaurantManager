@@ -1,4 +1,3 @@
-
 package BUS;
 
 import DAO.Account_DAO;
@@ -12,8 +11,9 @@ import javax.swing.table.DefaultTableModel;
  * @author macbookpro
  */
 public class Account_BUS {
+
     static IAccount_DAO account_DAO = new Account_DAO();
-    
+
     public static void getAllAccount(DefaultTableModel tableModel) {
         tableModel.setRowCount(0);
         ArrayList<Account_DTO> accountList = account_DAO.getAll();
@@ -21,6 +21,21 @@ public class Account_BUS {
             tableModel.addRow(new Object[]{account.getUsername(), account.getPassword(), account.getAccountType()});
         }
     }
-    
-    
+
+    /**
+     * Login
+     *
+     * @param username account username
+     * @param password account password
+     * @return A account contain username and password, otherwise null
+     */
+    public static Account_DTO Login(String username, String password) {
+        Account_DTO account = account_DAO.get(username);
+        if (account != null) {
+            if (account.getPassword().equals(password)) {
+                return new Account_DTO(username, "", account.getAccountType());
+            }
+        } 
+        return null;
+    }
 }

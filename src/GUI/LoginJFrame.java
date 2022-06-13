@@ -1,6 +1,9 @@
 package GUI;
 
+import BUS.Account_BUS;
+import DTO.Account_DTO;
 import java.awt.Color;
+import javax.swing.JOptionPane;
 
 public class LoginJFrame extends javax.swing.JFrame {
 
@@ -67,6 +70,11 @@ public class LoginJFrame extends javax.swing.JFrame {
         btnCloseApp.setBorder(null);
         btnCloseApp.setBorderPainted(false);
         btnCloseApp.setPreferredSize(new java.awt.Dimension(30, 30));
+        btnCloseApp.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCloseActionPerformed(evt);
+            }
+        });
 
         lbLogin.setFont(new java.awt.Font("Palatino", 1, 24)); // NOI18N
         lbLogin.setText("ĐĂNG NHẬP");
@@ -159,8 +167,23 @@ public class LoginJFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_tfUserNameActionPerformed
 
     private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
-        // TODO add your handling code here:
+        Account_DTO account = Account_BUS.Login(tfUserName.getText(), String.valueOf(tfPassword.getPassword()));
+        if (account != null) {
+            this.dispose();
+            new DashboardJFrame(account.getAccountType()).setVisible(true);
+        } else {
+            JOptionPane.showMessageDialog(rootPane, "Sai tài khoản hoặc mật khẩu vui lòng thử lại", "Login", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnLoginActionPerformed
+
+    private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
+        int result = JOptionPane.showConfirmDialog(null, "Bạn có muốn thoát khỏi hệ thống?", "Thoát", JOptionPane.YES_NO_OPTION);
+        if (result == JOptionPane.YES_OPTION) {
+            System.exit(0);
+        } else if (result == JOptionPane.NO_OPTION) {
+            System.err.println("No");
+        }
+    }//GEN-LAST:event_btnCloseActionPerformed
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
