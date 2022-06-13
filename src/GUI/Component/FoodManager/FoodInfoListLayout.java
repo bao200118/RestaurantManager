@@ -136,7 +136,7 @@ public class FoodInfoListLayout extends JPanel{
         gbc.gridy = 0;
         gbc.insets = new Insets(0, 0, 30, 80);
         gbc.anchor = GridBagConstraints.WEST;
-
+        
         cbFoodGroup.setModel(dcbmFoodGroupModeInfo);
         cbFoodGroup.setFocusable(false);
         cbFoodGroup.setPreferredSize(new Dimension((int) (width / 3.5) , 35));

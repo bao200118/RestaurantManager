@@ -32,7 +32,6 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -80,7 +79,6 @@ public class TableMapLayout extends JPanel {
         // init component
         gridviewTableItem = new JPanel();
         btnOpenTable = new RoundedButton();
-        btnMoveTable = new RoundedButton();
         btnBack = new RoundedButton();
         lbDateOpenTable = new JLabel();
         lbTableName = new JLabel("Chưa chọn");
@@ -128,27 +126,6 @@ public class TableMapLayout extends JPanel {
             btnOpenTableActionPerformed(evt);
         });
         leftLayout.add(btnOpenTable, gbc);
-
-        // build button move table UI
-        gbc.insets = new Insets(5, 5, 5, 5);
-        gbc.anchor = GridBagConstraints.EAST;
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        btnMoveTable.setForeground(new java.awt.Color(255, 255, 255));
-        btnMoveTable.setText("Chuyển bàn");
-        btnMoveTable.setColor(new java.awt.Color(77, 148, 255));
-        btnMoveTable.setColorOver(new java.awt.Color(51, 153, 255));
-        btnMoveTable.setFont(new java.awt.Font("Helvetica Neue", 0, 15)); // NOI18N
-        btnMoveTable.setRadius(10);
-        btnMoveTable.setBorderPainted(false);
-        btnMoveTable.setFocusPainted(false);
-        btnMoveTable.setPreferredSize(new Dimension(widthGridviewTableItem / 4, height / 22));
-        btnMoveTable.setBorderColor(Color.red);
-        btnMoveTable.addActionListener((ActionEvent evt) -> {
-            btnMoveTableActionPerformed(evt);
-        });
-
-        leftLayout.add(btnMoveTable, gbc);
 
         // build button back from choose food to table map
         gbc.insets = new Insets(30, 0, 0, 0);
@@ -338,7 +315,7 @@ public class TableMapLayout extends JPanel {
         JLabel lbTextPromotion2 = new JLabel("Khuyến mãi (%)");
         tfPromotionPercentUnit = new JTextField();
         JLabel lbTextTotalPayable = new JLabel("Thành tiền:");
-        lbTotalPayable = new JLabel("250.000");
+        lbTotalPayable = new JLabel("0.000");
         JLabel lbTextTotalPayableUnit = new JLabel("Đồng");
         paymentLayout = new JPanel();
         btnPayment = new RoundedButton();
@@ -702,13 +679,12 @@ public class TableMapLayout extends JPanel {
         }
         if (evt.getClickCount() == 2) {
             DinnerTable_DTO dinnerTableInfo = DinnerTable_BUS.getTableInfoByTableId(indexTable);
-            selectedOrderBillId = OrderBill_BUS.getCurrentBillId(indexTable);
-
             if ("Trống".equals(dinnerTableInfo.getStatus())) {
                 int result = JOptionPane.showConfirmDialog(null, "Bạn có muốn mở " + dinnerTableInfo.getName(), "Mở bàn", JOptionPane.YES_NO_OPTION);
                 if (result == JOptionPane.YES_OPTION) {
                     DinnerTable_BUS.setStatusOccupied(dinnerTableInfo.getId());
                     getInfoDinnerTable(indexTable);
+                    selectedOrderBillId = OrderBill_BUS.getCurrentBillId(indexTable);
                     loadTable();
                     displayFoodChooserListLayout(true);
                 } else {
@@ -736,9 +712,6 @@ public class TableMapLayout extends JPanel {
         }
     }
 
-    private void btnMoveTableActionPerformed(ActionEvent evt) {
-    }
-
     private void btnBackActionPerformed(ActionEvent evt) {
         displayFoodChooserListLayout(false);
     }
@@ -754,7 +727,7 @@ public class TableMapLayout extends JPanel {
         ));
         loadBillDetailByTableDinnerId(indexTable);
         loadTable();
-
+        displayFoodChooserListLayout(false);
     }
 
     private void btnClickFoodGroup(ActionEvent evt, String foodGroupName) {
@@ -806,11 +779,11 @@ public class TableMapLayout extends JPanel {
 
     private void tfPromotionPercentTextChangeActionPerformed(DocumentEvent evt) {
         System.err.println(tfProvisionalAmount.getText());
-        
+
         double total = Double.parseDouble(tfProvisionalAmount.getText());
-        double percent = 
-                Double.parseDouble(tfPromotionPercentUnit.getText()) > 100 ? 100 : Double.parseDouble(tfPromotionPercentUnit.getText());
-        lbTotalPayable.setText(Double.toString((total*(100 - percent)) / 100));
+        double percent
+                = Double.parseDouble(tfPromotionPercentUnit.getText()) > 100 ? 100 : Double.parseDouble(tfPromotionPercentUnit.getText());
+        lbTotalPayable.setText(Double.toString((total * (100 - percent)) / 100));
 
     }
 
@@ -900,7 +873,6 @@ public class TableMapLayout extends JPanel {
     private javax.swing.JPanel billByTable;
     private javax.swing.JPanel gridviewTableItem;
     private GUI.Component.RoundedButton btnOpenTable;
-    private GUI.Component.RoundedButton btnMoveTable;
     private GUI.Component.RoundedButton btnBack;
     private javax.swing.JLabel lbDateOpenTable;
     private javax.swing.JLabel lbTableName;
