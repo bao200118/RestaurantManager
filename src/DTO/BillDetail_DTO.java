@@ -5,7 +5,9 @@ package DTO;
  * @author macbookpro
  */
 public class BillDetail_DTO {
+
     private int iD;
+    private int iDFood;
     private String foodName;
     private int quantity;
     private int price;
@@ -14,14 +16,16 @@ public class BillDetail_DTO {
     /**
      * Constructs a BillDetail_DTO with id.
      *
-     * @param iD    bill detail's ID
-     * @param foodName     bill detail's food name
-     * @param quantity     bill detail's quantity
-     * @param price     bill's price
+     * @param iD bill detail's ID
+     * @param iDFood bill detail's food ID
+     * @param foodName bill detail's food name
+     * @param quantity bill detail's quantity
+     * @param price bill's price
      * @param totalMoney
      */
-    public BillDetail_DTO(int iD, String foodName, int quantity, int price, int totalMoney) {
+    public BillDetail_DTO(int iD, int iDFood, String foodName, int quantity, int price, int totalMoney) {
         this.iD = iD;
+        this.iDFood = iDFood;
         this.foodName = foodName;
         this.quantity = quantity;
         this.price = price;
@@ -44,6 +48,24 @@ public class BillDetail_DTO {
      */
     public void setiD(int iD) {
         this.iD = iD;
+    }
+
+    /**
+     * Gets the bill detail 's food id.
+     *
+     * @return An int representing the bill detail 's food id.
+     */
+    public int getiDFood() {
+        return iDFood;
+    }
+
+    /**
+     * Sets the bill detail 's food id.
+     *
+     * @param iDFood An int containing the bill detail 's food id.
+     */
+    public void setiDFood(int iDFood) {
+        this.iDFood = iDFood;
     }
 
     /**
@@ -73,7 +95,7 @@ public class BillDetail_DTO {
         return quantity;
     }
 
-     /**
+    /**
      * Sets the bill detail's quantity.
      *
      * @param quantity An int containing the bill detail's quantity.
@@ -117,5 +139,5 @@ public class BillDetail_DTO {
     public void setTotalMoney(int totalMoney) {
         this.totalMoney = totalMoney;
     }
-    
+
 }

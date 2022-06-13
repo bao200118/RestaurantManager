@@ -26,6 +26,10 @@ public class Food_BUS {
         }
     }
     
+    public static ArrayList<Food_DTO> getAllFoods() {
+        return food_DAO.getAll();
+    }
+    
     public static Food_DTO getFoodByName(String foodName) {
         return food_DAO.getFoodByName(foodName);
     }
@@ -121,5 +125,9 @@ public class Food_BUS {
             ImageIcon icon = ImageUtils.convertByteArrayToImageIcon(food.getImage());
             tableModel.addRow(new Object[]{food.getId(), food.getFoodGroupName(),food.getName(), food.getUnit(), food.getPrice(), icon});
         }
+    }
+    
+    public static ArrayList<Food_DTO> findFoodsByGroupName(String groupName) {
+        return food_DAO.findFoodsByGroupName(groupName);
     }
 }

@@ -30,7 +30,8 @@ public class Bill_DAO implements IBill_DAO {
     public ArrayList<Bill_DTO> getAll() {
         ArrayList<Bill_DTO> bills = new ArrayList<>();
 
-        String sqlStatement = "select HoaDon.ID,BanAn.TenBan,HoaDon.NgayThanhToan,HoaDon.SoTien from HoaDon,BanAn where HoaDon.IDBan = BanAn.ID AND TinhTrang = 1";
+        String sqlStatement = "select HoaDon.ID,BanAn.TenBan,HoaDon.NgayThanhToan,HoaDon.SoTien from HoaDon,BanAn"
+                + " where HoaDon.IDBan = BanAn.ID AND TinhTrang = 1";
         conn = SQLiteDBExecutor.connect();
         ResultSet rs = SQLiteDBExecutor.executeQuery(sqlStatement, conn);
 

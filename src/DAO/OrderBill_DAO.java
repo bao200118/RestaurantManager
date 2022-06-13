@@ -12,6 +12,11 @@ import java.util.ArrayList;
 import DTO.OrderDetail_DTO;
 import DTO.OrderBill_DTO;
 import DTO.Statistic_DTO;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -110,13 +115,12 @@ public class OrderBill_DAO implements IOrderBill_DAO {
     /**
      * Delete all order bill detail in table
      *
-     * @param id table id
+     * @param id order bill id
      * @return A Boolean true if success, otherwise false
      */
     @Override
     public boolean deleteAllBillDetail(int id) {
-        String sqlStatement = "Delete from HoaDonInfo where HoaDonInfo.IDHoaDon = ("
-                + "Select HoaDon.ID from BanAn,HoaDon where HoaDon.IDBan = ? AND TinhTrang = 0)";
+        String sqlStatement = "Delete from HoaDonInfo where HoaDonInfo.IDHoaDon = ?";
         conn = SQLiteDBExecutor.connect();
 
         boolean isSuccess = SQLiteDBExecutor.executeNonQuery(sqlStatement, conn, id);
@@ -129,7 +133,8 @@ public class OrderBill_DAO implements IOrderBill_DAO {
     /**
      * Check out table bill
      *
-     * @param orderBill Order bill of table
+     * @param orderBill Order bill of table must contain checkoutDate,total,id
+     * table
      * @return A Boolean true if success, otherwise false
      */
     @Override
@@ -168,7 +173,8 @@ public class OrderBill_DAO implements IOrderBill_DAO {
     /**
      * Update amount of food in order detail
      *
-     * @param orderDetail Order food detail
+     * @param orderDetail Order food detail must contain orderBill id, amount
+     * and food id
      * @return A Boolean true if success, otherwise false
      */
     @Override
@@ -187,7 +193,8 @@ public class OrderBill_DAO implements IOrderBill_DAO {
     /**
      * Delete order detail
      *
-     * @param orderDetail Order food detail
+     * @param orderDetail Order food detail must contain order bill id and food
+     * id
      * @return A Boolean true if success, otherwise false
      */
     @Override
@@ -196,7 +203,7 @@ public class OrderBill_DAO implements IOrderBill_DAO {
         conn = SQLiteDBExecutor.connect();
 
         boolean isSuccess = SQLiteDBExecutor.executeNonQuery(sqlStatement, conn,
-                orderDetail.getId(), orderDetail.getId());
+                orderDetail.getId(), orderDetail.getIdFood());
 
         SQLiteDBExecutor.closeConnection(conn);
 
@@ -303,14 +310,29 @@ public class OrderBill_DAO implements IOrderBill_DAO {
         ArrayList<Statistic_DTO> statisticList = new ArrayList<>();
 
         String sqlStatement = "SELECT substr(NgayThanhToan,4,2) as Thang,sum(SoTien) DoanhThu from HoaDon"
-                + " where substr(NgayThanhToan,Length(NgayThanhToan)-3,4) = ? group by substr(NgayThanhToan,4,2)";
+                + " where substr(NgayThanhToan,Length(NgayThanhToan)-3,4) = ? group by Thang";
         conn = SQLiteDBExecutor.connect();
         ResultSet rs = SQLiteDBExecutor.executeQuery(sqlStatement, conn, year);
 
         try {
-            while (rs.next()) {
-                Statistic_DTO statistic = new Statistic_DTO(rs.getString("Thang"), rs.getDouble("DoanhThu"));
-                statisticList.add(statistic);
+            Statistic_DTO statisticData = null;
+            if (rs.next()) {
+                statisticData = new Statistic_DTO(rs.getString("Thang"), rs.getDouble("DoanhThu"));
+            }
+            for (int i = 1; i <= 12; i++) {
+                System.err.println("RUN HERE");
+
+                if (statisticData != null && Integer.parseInt(statisticData.getIndex()) == i) {
+                    statisticList.add(statisticData);
+                    if (rs.next()) {
+                        statisticData = new Statistic_DTO(rs.getString("Thang"), rs.getDouble("DoanhThu"));
+                    } else {
+                        statisticData = null;
+                    }
+                } else {
+                    Statistic_DTO statistic = new Statistic_DTO(Integer.toString(i), 0);
+                    statisticList.add(statistic);
+                }
             }
             rs.close();
             rs.getStatement().close();
@@ -324,21 +346,16 @@ public class OrderBill_DAO implements IOrderBill_DAO {
     /**
      * Statistic income of each year
      *
-     * @param year start year to statistic
-     * @param yearStep step of year for statistic
      * @return A list of total income each year
      */
     @Override
-    public ArrayList<Statistic_DTO> statisticIncomeByYear(String year, int yearStep) {
+    public ArrayList<Statistic_DTO> statisticIncomeByYear() {
         ArrayList<Statistic_DTO> statisticList = new ArrayList<>();
 
-        String sqlStatement = "select substr(NgayThanhToan,Length(NgayThanhToan)-3,4) as Nam,sum(SoTien) as DoanhThu"
-                + " from HoaDon,BanAn"
-                + " where substr(NgayThanhToan,Length(NgayThanhToan)-3,4) between ? and ? "
-                + "group by substr(NgayThanhToan,Length(NgayThanhToan)-3,4)";
+        String sqlStatement = "select substr(NgayThanhToan,Length(NgayThanhToan)-3,4) as Nam,sum(SoTien) as DoanhThu from HoaDon"
+                + " where Nam is not null group by Nam";
         conn = SQLiteDBExecutor.connect();
-        ResultSet rs = SQLiteDBExecutor.executeQuery(sqlStatement, conn,
-                Integer.toString(Integer.parseInt(year) - yearStep), year);
+        ResultSet rs = SQLiteDBExecutor.executeQuery(sqlStatement, conn);
 
         try {
             while (rs.next()) {
@@ -355,22 +372,38 @@ public class OrderBill_DAO implements IOrderBill_DAO {
     }
 
     /**
-     * Statistic income in today
+     * Statistic income by date
      *
-     * @param date
+     * @param fromDay from date format dd/MM/YYYY
+     * @param toDay to date format dd/MM/YYYY
      * @return A list of income in date
      */
     @Override
-    public ArrayList<Statistic_DTO> statisticIncomeInDay(String date) {
+    public ArrayList<Statistic_DTO> statisticIncomeByDate(String fromDay, String toDay) {
         ArrayList<Statistic_DTO> statisticList = new ArrayList<>();
 
-        String sqlStatement = "select SoTien from HoaDon where NgayThanhToan=? ";
+        String fromDateFormat = "";
+        String toDateFormat = "";
+        try {
+            Date fromDate = new SimpleDateFormat("dd/MM/yyyy").parse(fromDay);
+            fromDateFormat = new SimpleDateFormat("yyyy-MM-dd").format(fromDate);
+
+            Date toDate = new SimpleDateFormat("dd/MM/yyyy").parse(toDay);
+            toDateFormat = new SimpleDateFormat("yyyy-MM-dd").format(toDate);
+        } catch (ParseException ex) {
+            Logger.getLogger(Bill_DAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        String sqlStatement = "select NgayThanhToan, sum(SoTien) as DoanhThu from HoaDon"
+                + " where DATE(substr(NgayThanhToan,-4,4) || '-' || substr(NgayThanhToan,4,2) || '-' || substr(NgayThanhToan,1,2))"
+                + " between DATE(?) and DATE(?)  group by NgayThanhToan";
+        System.out.println(fromDateFormat + " " +toDateFormat);
         conn = SQLiteDBExecutor.connect();
-        ResultSet rs = SQLiteDBExecutor.executeQuery(sqlStatement, conn, date);
+        ResultSet rs = SQLiteDBExecutor.executeQuery(sqlStatement, conn, fromDateFormat, toDateFormat);
 
         try {
             while (rs.next()) {
-                Statistic_DTO statistic = new Statistic_DTO(rs.getString(date), rs.getDouble("DoanhThu"));
+                Statistic_DTO statistic = new Statistic_DTO(rs.getString("NgayThanhToan"), rs.getDouble("DoanhThu"));
                 statisticList.add(statistic);
             }
             rs.close();
@@ -380,6 +413,35 @@ public class OrderBill_DAO implements IOrderBill_DAO {
         }
         SQLiteDBExecutor.closeConnection(conn);
         return statisticList;
+    }
+
+    /**
+     * Statistic income in today
+     *
+     * @param date date format dd/MM/YYYY
+     * @return Income today
+     */
+    @Override
+    public Statistic_DTO statisticIncomeInDay(String date) {
+
+        System.out.println(date);
+        String sqlStatement = "select sum(SoTien) as DoanhThu from HoaDon where NgayThanhToan = ?";
+        conn = SQLiteDBExecutor.connect();
+        ResultSet rs = SQLiteDBExecutor.executeQuery(sqlStatement, conn, date);
+
+        Statistic_DTO statistic = null;
+        try {
+            while (rs.next()) {
+                statistic = new Statistic_DTO(date, rs.getDouble("DoanhThu"));
+                return statistic;
+            }
+            rs.close();
+            rs.getStatement().close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        SQLiteDBExecutor.closeConnection(conn);
+        return new Statistic_DTO(date,0);
     }
 
     @Override

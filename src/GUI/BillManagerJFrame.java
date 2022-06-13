@@ -54,7 +54,6 @@ public class BillManagerJFrame extends JPanel{
         };
         tbBills = new JTable(dtmTableModel);
         Bill_BUS.getAllBills(dtmTableModel);
-        dateUtils = new DateUtils();
         
         setPreferredSize(new Dimension(bodyWidth, bodyHeight));
         
@@ -207,7 +206,7 @@ public class BillManagerJFrame extends JPanel{
        
         JScrollPane jsp = new JScrollPane(tbBills);
         tableLayout.setLayout(new BorderLayout());
-        jsp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+        jsp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 
         tableLayout.add(jsp, BorderLayout.CENTER);
         
@@ -219,7 +218,7 @@ public class BillManagerJFrame extends JPanel{
 //            Food_BUS.getAllFoods((DefaultTableModel) tbFoodInfoList.getModel());
 //        } else {
 //        }
-        Bill_BUS.getAllBillsBetweenFromDayAndToDay((DefaultTableModel) tbBills.getModel(), dateUtils.formatDate(dtpFromDate.getDate()), dateUtils.formatDate(dtpToDate.getDate()));
+        Bill_BUS.getAllBillsBetweenFromDayAndToDay((DefaultTableModel) tbBills.getModel(), DateUtils.formatDate(dtpFromDate.getDate()), DateUtils.formatDate(dtpToDate.getDate()));
     } 
     
     private void btnShowAllActionPerformed(ActionEvent evt) {  
@@ -243,6 +242,5 @@ public class BillManagerJFrame extends JPanel{
     private GUI.Component.RoundedButton btnShowAll;
     private javax.swing.JTable tbBills;
     private javax.swing.table.DefaultTableModel dtmTableModel;
-    private DateUtils dateUtils;
     // nd of variables declaration 
 }

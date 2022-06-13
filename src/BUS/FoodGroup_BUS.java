@@ -34,6 +34,10 @@ public class FoodGroup_BUS {
         }
     }
     
+    public static ArrayList<FoodGroup_DTO> getAllFoodGroups() {
+        return foodGroup_DAO.getAll();
+    }
+    
     public static FoodGroup_DTO getFoodGroupByName(String foodGroupName) {
         return foodGroup_DAO.getFoodGroupByName(foodGroupName);
     }

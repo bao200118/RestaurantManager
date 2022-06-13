@@ -3,12 +3,21 @@ package GUI.Component.TableManager;
 import BUS.DinnerTable_BUS;
 import BUS.TableItemUI;
 import BUS.BillDetail_BUS;
+import BUS.FoodGroup_BUS;
+import BUS.Food_BUS;
+import BUS.OrderBill_BUS;
 import DTO.BillDetail_DTO;
 import DTO.DinnerTable_DTO;
+import DTO.FoodGroup_DTO;
+import DTO.Food_DTO;
+import DTO.OrderBill_DTO;
+import DTO.OrderDetail_DTO;
 import DTO.TableModelItemUI;
 import GUI.Component.RoundedButton;
 import GUI.Component.TableManager.FoodCard.FoodCard;
+import Interface.EventTextChange;
 import Utils.DateUtils;
+import Utils.ImageUtils;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -23,7 +32,10 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -36,6 +48,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.event.DocumentEvent;
 import javax.swing.table.DefaultTableModel;
 
 public class TableMapLayout extends JPanel {
@@ -240,7 +253,7 @@ public class TableMapLayout extends JPanel {
         bodyLayout.setOpaque(false);
 
         // add each table Item UI to the map layout
-        LoadTabel();
+        loadTable();
 
         bodyLayout.setPreferredSize(new Dimension(widthGridviewTableItem, getNumberRowTableMap(tables) * (int) (widthGridviewTableItem / 4.7)));
 
@@ -269,14 +282,7 @@ public class TableMapLayout extends JPanel {
         JPanel filterFoodGroupLayout = new JPanel();
         filterFoodGroupLayout.setBackground(new Color(235, 240, 236));
 
-        for (int i = 0; i <= 10; i++) {
-            RoundedButton btnButton = btnFoodGroupItem("Hải sản");
-            btnButton.setRadius(5);
-            btnButton.setColor(new Color(109, 213, 247));
-            btnButton.setFont(new java.awt.Font("Helvetica Neue", 1, 14));
-            btnButton.setForeground(Color.WHITE);
-            filterFoodGroupLayout.add(btnButton);
-        }
+        loadFoodGroup(filterFoodGroupLayout);
 
         JScrollPane scrollPaneFilterFoodGroup = new JScrollPane(filterFoodGroupLayout, ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollPaneFilterFoodGroup.setPreferredSize(new Dimension(widthGridviewTableItem, (int) (height / 14)));
@@ -284,23 +290,9 @@ public class TableMapLayout extends JPanel {
         barFilterFoodGroup.setPreferredSize(new Dimension(0, 5));
 
         // food list card
-        int foodCardListLayoutHeigth = (int) (height / 1.4 - height / 14);
-        JPanel foodCardListLayout = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        foodCardListLayout.setPreferredSize(new Dimension(widthGridviewTableItem, getNumberRowFoodCard(10) * (int) (foodCardListLayoutHeigth / 2.8)));
-        foodCardListLayout.setBackground(new Color(240, 244, 245));
-
-        for (int i = 0; i <= 10; i++) {
-            FoodCard foodCard = new FoodCard("Lẩu Thập cẩm", "200000", new ImageIcon(getClass().getResource("/assets/img_lauthapcam.jpeg")), new Dimension(widthGridviewTableItem, foodCardListLayoutHeigth));
-            foodCardListLayout.add(foodCard);
-        }
-
-        JScrollPane scrollPaneFoodCardList = new JScrollPane(foodCardListLayout, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPaneFoodCardList.setPreferredSize(new Dimension(widthGridviewTableItem, (int) (height / 1.4 - height / 14)));
-        JScrollBar barFoodCardList = scrollPaneFoodCardList.getVerticalScrollBar();
-        barFoodCardList.setPreferredSize(new Dimension(7, 0));
-
         foodChooserLayout.add(scrollPaneFilterFoodGroup);
-        foodChooserLayout.add(scrollPaneFoodCardList);
+
+        loadFoodCard("Tất cả");
 
         foodChooserLayout.setVisible(false);
         gridviewTableItem.add(headerLayout, BorderLayout.NORTH);
@@ -324,7 +316,13 @@ public class TableMapLayout extends JPanel {
         billByTable.setPreferredSize(new Dimension(widthBillByTable, heighTBillByTable));
 
         // init component
-        DefaultTableModel model = new DefaultTableModel(billDetailItem, properties);
+        DefaultTableModel model = new DefaultTableModel(billDetailItem, properties) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                //all cells false
+                return false;
+            }
+        };
         tbBillDetails = new JTable(model);
         lbTitle = new JLabel("HOÁ ĐƠN THEO BÀN");
         billDetailsLayout = new JPanel();
@@ -336,11 +334,8 @@ public class TableMapLayout extends JPanel {
         JLabel lbTextProvisionalAmount = new JLabel("Tổng tiền");
         tfProvisionalAmount = new JTextField();
         JLabel lbTextUnit1 = new JLabel("Đồng");
-        JLabel lbTextUnit2 = new JLabel("Đồng");
         JLabel lbTextUnit3 = new JLabel("%");
-        JLabel lbTextPromotion1 = new JLabel("Khuyến mãi (đồng)");
         JLabel lbTextPromotion2 = new JLabel("Khuyến mãi (%)");
-        tfPromotionDongUnit = new JTextField();
         tfPromotionPercentUnit = new JTextField();
         JLabel lbTextTotalPayable = new JLabel("Thành tiền:");
         lbTotalPayable = new JLabel("250.000");
@@ -412,6 +407,9 @@ public class TableMapLayout extends JPanel {
         iconMinus = new ImageIcon(newimgMinus);
         btnDecreaseAmountFood.setIcon(iconMinus);
         btnDecreaseAmountFood.setPreferredSize(new Dimension(30, 30));
+        btnDecreaseAmountFood.addActionListener((e) -> {
+            btnDecreaseFoodAmountPerformed(e);
+        });
 
         //set properties for button increase amount food
         btnIncreaseAmountFood.setBackground(new Color(0, 0, 0, 0));
@@ -423,6 +421,9 @@ public class TableMapLayout extends JPanel {
         iconPlus = new ImageIcon(newimgPlus);
         btnIncreaseAmountFood.setIcon(iconPlus);
         btnIncreaseAmountFood.setPreferredSize(new Dimension(30, 30));
+        btnIncreaseAmountFood.addActionListener((e) -> {
+            btnIncreaseFoodAmountPerformed(e);
+        });
 
         //set properties for button delete food
         btnDeleteFood.setBackground(new Color(0, 0, 0, 0));
@@ -434,6 +435,9 @@ public class TableMapLayout extends JPanel {
         iconDelete = new ImageIcon(newimgDelete);
         btnDeleteFood.setIcon(iconDelete);
         btnDeleteFood.setPreferredSize(new Dimension(30, 30));
+        btnDeleteFood.addActionListener((e) -> {
+            btnRemoveFoodPerfomed(e);
+        });
 
         FlowLayout flowLayout = new FlowLayout(FlowLayout.RIGHT);
         adjustNumberOfFoodsLayout.setLayout(flowLayout);
@@ -480,25 +484,10 @@ public class TableMapLayout extends JPanel {
 
         jPanel1.add(lbTextUnit1);
 
-        // row 2 of provisional Amount Layout
-        lbTextPromotion1.setFont(new Font("Segoe UI", 0, 14));
-        lbTextPromotion1.setForeground(Color.WHITE);
-        lbTextPromotion1.setPreferredSize(new Dimension((int) (0.5 * widthBillByTable), 20));
-
-        tfPromotionDongUnit.setPreferredSize(new Dimension((int) (0.3 * widthBillByTable), 20));
-
-        lbTextUnit2.setFont(new Font("Segoe UI", 0, 14));
-        lbTextUnit2.setForeground(Color.WHITE);
-        lbTextUnit2.setPreferredSize(new Dimension((int) (0.2 * widthBillByTable), 20));
-
         JPanel jPanel2 = new JPanel();
         BoxLayout boxLayout2 = new BoxLayout(jPanel2, BoxLayout.X_AXIS);
         jPanel2.setLayout(boxLayout2);
         jPanel2.setBackground(new Color(51, 51, 51));
-
-        jPanel2.add(lbTextPromotion1);
-        jPanel2.add(tfPromotionDongUnit);
-        jPanel2.add(lbTextUnit2);
 
         // row 3 of provisional Amount Layout
         lbTextPromotion2.setFont(new Font("Segoe UI", 0, 14));
@@ -510,6 +499,9 @@ public class TableMapLayout extends JPanel {
         lbTextUnit3.setPreferredSize(new Dimension((int) (0.2 * widthBillByTable), 20));
 
         tfPromotionPercentUnit.setPreferredSize(new Dimension((int) (0.3 * widthBillByTable), 20));
+        tfPromotionPercentUnit.getDocument().addDocumentListener((EventTextChange) (DocumentEvent evt) -> {
+            tfPromotionPercentTextChangeActionPerformed(evt);
+        });
 
         JPanel jPanel3 = new JPanel();
         BoxLayout boxLayout3 = new BoxLayout(jPanel3, BoxLayout.X_AXIS);
@@ -587,19 +579,137 @@ public class TableMapLayout extends JPanel {
         add(gridviewTableItem, BorderLayout.WEST);
     }
 
+    private void loadTable() {
+        List<TableModelItemUI> tables = TableItemUI.getAllTableDinnerUI();
+        int widthGridviewTableItem = dimension.width - dimension.width / 3 - 5;
+        bodyLayout.removeAll();
+        for (int i = 0; i <= tables.size() - 1; i++) {
+            final int indexTemp = i;
+            TableItem tableItem = new TableItem(new ImageIcon(getClass().getResource("Trống".equals(tables.get(i).getStatus()) ? "/assets/ic_tableware.png" : "/assets/ic_tableware_selected.png")), tables.get(i).getName());
+            tableItem.setPreferredSize(new Dimension((int) (widthGridviewTableItem / 5.4), (int) (widthGridviewTableItem / 5)));
+            tableItem.addMouseListener(new java.awt.event.MouseAdapter() {
+                @Override
+                public void mouseClicked(java.awt.event.MouseEvent evt) {
+                    indexTable = tables.get(indexTemp).getiD();
+                    tableItemMouseClicked(evt);
+                }
+            });
+            bodyLayout.add(tableItem);
+        }
+    }
+
+    private void loadFoodGroup(JPanel filterFoodGroupLayout) {
+        ArrayList<FoodGroup_DTO> foodGroups = FoodGroup_BUS.getAllFoodGroups();
+
+        //Set All button
+        RoundedButton btnButtonAll = btnFoodGroupItem("Tất cả");
+        btnButtonAll.setRadius(5);
+        btnButtonAll.setColor(new Color(109, 213, 247));
+        btnButtonAll.setFont(new java.awt.Font("Helvetica Neue", 1, 14));
+        btnButtonAll.setForeground(Color.WHITE);
+        btnButtonAll.addActionListener((ActionEvent evt) -> {
+
+            btnClickFoodGroup(evt, btnButtonAll.getText());
+        });
+        filterFoodGroupLayout.add(btnButtonAll);
+
+        for (int i = 0; i < foodGroups.size(); i++) {
+            RoundedButton btnButton = btnFoodGroupItem(foodGroups.get(i).getName());
+            btnButton.setRadius(5);
+            btnButton.setColor(new Color(109, 213, 247));
+            btnButton.setFont(new java.awt.Font("Helvetica Neue", 1, 14));
+            btnButton.setForeground(Color.WHITE);
+            btnButton.addActionListener((ActionEvent evt) -> {
+                btnClickFoodGroup(evt, btnButton.getText());
+            });
+            filterFoodGroupLayout.add(btnButton);
+        }
+    }
+
+    private void loadFoodCard(String name) {
+        int widthGridviewTableItem = dimension.width - dimension.width / 3 - 5;
+
+        int foodCardListLayoutHeigth = (int) (dimension.height / 1.4 - dimension.height / 14);
+        JPanel foodCardListLayout = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        foodCardListLayout.setBackground(new Color(240, 244, 245));
+
+        JScrollPane scrollPaneFoodCardList = new JScrollPane(foodCardListLayout, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPaneFoodCardList.setPreferredSize(new Dimension(widthGridviewTableItem, (int) (dimension.height / 1.4 - dimension.width / 14)));
+        JScrollBar barFoodCardList = scrollPaneFoodCardList.getVerticalScrollBar();
+        barFoodCardList.setPreferredSize(new Dimension(7, 0));
+
+        ArrayList<Food_DTO> foods;
+
+        if (name.equals("Tất cả")) {
+
+            foods = Food_BUS.getAllFoods();
+        } else {
+            foods = Food_BUS.findFoodsByGroupName(name);
+        }
+
+        for (int i = 0; i < foods.size(); i++) {
+            FoodCard foodCard = new FoodCard(foods.get(i).getName(), Integer.toString(foods.get(i).getPrice()),
+                    ImageUtils.convertByteArrayToImageIcon(foods.get(i).getImage()),
+                    new Dimension(widthGridviewTableItem, foodCardListLayoutHeigth));
+            final int tempFoodId = foods.get(i).getId();
+            final double tempFoodPrice = foods.get(i).getPrice();
+            final String tempFoodName = foods.get(i).getName();
+            foodCard.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (e.getClickCount() % 2 == 0) {
+                        for (int i = 0; i < billDetailList.size(); i++) {
+                            if (billDetailList.get(i).getFoodName().equals(tempFoodName)) {
+                                OrderBill_BUS.updateAmountFood(new OrderDetail_DTO(
+                                        selectedOrderBillId, tempFoodId,
+                                        billDetailList.get(i).getQuantity() + 1,
+                                        (billDetailList.get(i).getQuantity() + 1) * tempFoodPrice
+                                ));
+                                loadBillDetailByTableDinnerId(indexTable);
+                                return;
+                            }
+                        }
+                        OrderBill_BUS.insertFood(new OrderDetail_DTO(
+                                selectedOrderBillId, tempFoodId, 1, tempFoodPrice));
+                        loadBillDetailByTableDinnerId(indexTable);
+                    }
+                }
+            });
+            foodCardListLayout.add(foodCard);
+        }
+
+        foodCardListLayout.setPreferredSize(new Dimension(widthGridviewTableItem,
+                getNumberRowFoodCard(foods.size()) * (int) (foodCardListLayoutHeigth / 2.8)));
+
+        if (foodChooserLayout.getComponentCount() > 1) {
+            foodChooserLayout.remove(1);
+            foodChooserLayout.add(scrollPaneFoodCardList);
+        } else {
+            foodChooserLayout.add(scrollPaneFoodCardList);
+        }
+
+        foodChooserLayout.setVisible(false);
+        foodChooserLayout.setVisible(true);
+    }
+
     private void tableItemMouseClicked(MouseEvent evt) {
         if (evt.getClickCount() == 1) {
+            tfPromotionPercentUnit.setText("");
+            tfPromotionPercentUnit.repaint();
             getInfoDinnerTable(indexTable);
             loadBillDetailByTableDinnerId(indexTable);
+            selectedOrderBillId = OrderBill_BUS.getCurrentBillId(indexTable);
         }
         if (evt.getClickCount() == 2) {
             DinnerTable_DTO dinnerTableInfo = DinnerTable_BUS.getTableInfoByTableId(indexTable);
+            selectedOrderBillId = OrderBill_BUS.getCurrentBillId(indexTable);
+
             if ("Trống".equals(dinnerTableInfo.getStatus())) {
                 int result = JOptionPane.showConfirmDialog(null, "Bạn có muốn mở " + dinnerTableInfo.getName(), "Mở bàn", JOptionPane.YES_NO_OPTION);
                 if (result == JOptionPane.YES_OPTION) {
                     DinnerTable_BUS.setStatusOccupied(dinnerTableInfo.getId());
                     getInfoDinnerTable(indexTable);
-                    LoadTabel();
+                    loadTable();
                     displayFoodChooserListLayout(true);
                 } else {
                     // code here
@@ -607,7 +717,6 @@ public class TableMapLayout extends JPanel {
             } else {
                 displayFoodChooserListLayout(true);
             }
-
         }
     }
 
@@ -618,7 +727,8 @@ public class TableMapLayout extends JPanel {
             if (result == JOptionPane.YES_OPTION) {
                 DinnerTable_BUS.setStatusOccupied(dinnerTableInfo.getId());
                 getInfoDinnerTable(indexTable);
-                LoadTabel();
+                selectedOrderBillId = OrderBill_BUS.getCurrentBillId(indexTable);
+                loadTable();
                 displayFoodChooserListLayout(true);
             }
         } else {
@@ -627,7 +737,6 @@ public class TableMapLayout extends JPanel {
     }
 
     private void btnMoveTableActionPerformed(ActionEvent evt) {
-
     }
 
     private void btnBackActionPerformed(ActionEvent evt) {
@@ -635,6 +744,74 @@ public class TableMapLayout extends JPanel {
     }
 
     private void btnPaymentActionPerformed(ActionEvent evt) {
+        OrderBill_BUS.checkoutBill(new OrderBill_DTO(
+                selectedOrderBillId,
+                indexTable,
+                "",
+                "1",
+                dateUtils.getDateNow(),
+                Double.parseDouble(lbTotalPayable.getText())
+        ));
+        loadBillDetailByTableDinnerId(indexTable);
+        loadTable();
+
+    }
+
+    private void btnClickFoodGroup(ActionEvent evt, String foodGroupName) {
+        System.out.println(foodGroupName + " CLICK");
+        loadFoodCard(foodGroupName);
+    }
+
+    private void btnIncreaseFoodAmountPerformed(ActionEvent evt) {
+        int row = tbBillDetails.getSelectedRow();
+        if (row != -1) {
+
+            OrderBill_BUS.updateAmountFood(new OrderDetail_DTO(
+                    selectedOrderBillId, billDetailList.get(row).getiDFood(),
+                    billDetailList.get(row).getQuantity() + 1,
+                    billDetailList.get(row).getPrice() * billDetailList.get(row).getQuantity()
+            ));
+            loadBillDetailByTableDinnerId(indexTable);
+            tbBillDetails.setRowSelectionInterval(row, row);
+        }
+    }
+
+    private void btnDecreaseFoodAmountPerformed(ActionEvent evt) {
+        int row = tbBillDetails.getSelectedRow();
+        if (row != -1) {
+
+            if (billDetailList.get(row).getQuantity() > 0) {
+                OrderBill_BUS.updateAmountFood(new OrderDetail_DTO(
+                        selectedOrderBillId, billDetailList.get(row).getiDFood(),
+                        billDetailList.get(row).getQuantity() - 1,
+                        billDetailList.get(row).getPrice() * billDetailList.get(row).getQuantity()
+                ));
+                loadBillDetailByTableDinnerId(indexTable);
+                tbBillDetails.setRowSelectionInterval(row, row);
+            }
+        }
+    }
+
+    private void btnRemoveFoodPerfomed(ActionEvent evt) {
+        int row = tbBillDetails.getSelectedRow();
+        if (row != -1) {
+            OrderBill_BUS.deleteOrderDetail(new OrderDetail_DTO(
+                    selectedOrderBillId, billDetailList.get(row).getiDFood(),
+                    0,
+                    0
+            ));
+            loadBillDetailByTableDinnerId(indexTable);
+        }
+    }
+
+    private void tfPromotionPercentTextChangeActionPerformed(DocumentEvent evt) {
+        System.err.println(tfProvisionalAmount.getText());
+        
+        double total = Double.parseDouble(tfProvisionalAmount.getText());
+        double percent = 
+                Double.parseDouble(tfPromotionPercentUnit.getText()) > 100 ? 100 : Double.parseDouble(tfPromotionPercentUnit.getText());
+        lbTotalPayable.setText(Double.toString((total*(100 - percent)) / 100));
+
     }
 
     private void displayFoodChooserListLayout(boolean isDislpay) {
@@ -662,8 +839,6 @@ public class TableMapLayout extends JPanel {
     }
 
     // Load bill detail by dinner table id
-    List<BillDetail_DTO> billDetailList;
-
     private void loadBillDetailByTableDinnerId(int tableId) {
         int totalMoney = 0;
         System.out.println("LOAD BILL");
@@ -745,11 +920,12 @@ public class TableMapLayout extends JPanel {
     private javax.swing.JPanel provisionalAmountLayout;
     private javax.swing.JPanel totalPayableLayout;
     private javax.swing.JTextField tfProvisionalAmount;
-    private javax.swing.JTextField tfPromotionDongUnit;
     private javax.swing.JTextField tfPromotionPercentUnit;
     private javax.swing.JLabel lbTotalPayable;
     private javax.swing.JPanel paymentLayout;
     private GUI.Component.RoundedButton btnPayment;
     private javax.swing.JPanel bodyLayout;
+    private List<BillDetail_DTO> billDetailList;
+    private int selectedOrderBillId;
     // nd of variables declaration 
 }
