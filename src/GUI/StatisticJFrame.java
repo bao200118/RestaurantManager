@@ -5,6 +5,7 @@ import DTO.Statistic_DTO;
 import GUI.Component.RoundedButton;
 import Utils.DateUtils;
 import com.toedter.calendar.JDateChooser;
+import com.toedter.calendar.JTextFieldDateEditor;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -93,9 +94,9 @@ public class StatisticJFrame extends JPanel {
         gbc.gridy = 1;
         gbc.gridwidth = 1;
 
-        Statistic_DTO statisticNow = 
-                OrderBill_BUS.statisticIncomeInDay(DateUtils.formatDate(new Date()));
-        
+        Statistic_DTO statisticNow
+                = OrderBill_BUS.statisticIncomeInDay(DateUtils.formatDate(new Date()));
+
         lbDateNow = new JLabel(statisticNow.getIndex());
         lbDateNow.setFont(new Font("sansserif", 1, 16));
         lbDateNow.setForeground(Color.BLACK);
@@ -189,6 +190,7 @@ public class StatisticJFrame extends JPanel {
         dtpFromDate.setFocusable(false);
         dtpFromDate.setPreferredSize(new Dimension((int) (bodyWidth / 5), 35));
         dtpFromDate.setFont(new java.awt.Font("sansserif", 0, 14));
+        ((JTextFieldDateEditor) dtpFromDate.getDateEditor()).setEditable(false);
         filterLayout.add(dtpFromDate, gbcFilter);
 
         gbcFilter.insets = new Insets(0, 0, 0, 10);
@@ -209,6 +211,7 @@ public class StatisticJFrame extends JPanel {
         dtpToDate.setFocusable(false);
         dtpToDate.setPreferredSize(new Dimension((int) (bodyWidth / 5), 35));
         dtpToDate.setFont(new java.awt.Font("sansserif", 0, 14));
+        ((JTextFieldDateEditor) dtpToDate.getDateEditor()).setEditable(false);
         filterLayout.add(dtpToDate, gbcFilter);
 
         // label text chọn năm thống kê
@@ -234,6 +237,7 @@ public class StatisticJFrame extends JPanel {
         cbYearChooser.setFont(new java.awt.Font("sansserif", 0, 14));
         cbYearChooser.setVisible(false);
         cbYearChooser.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent evt) {
                 cbYearChooserActionPerformed(evt);
             }
@@ -313,6 +317,8 @@ public class StatisticJFrame extends JPanel {
             }
             case "Năm" -> {
                 btnStatistic.setVisible(false);
+                displayUIFormDateStatistic(false);
+                displayUIFormMonthStatistic(false);
                 loadChart(OrderBill_BUS.statisticIncomeByYear(), "Yearly");
             }
             default ->
@@ -373,7 +379,6 @@ public class StatisticJFrame extends JPanel {
             chartLayout.updateUI();
         }
     }
-    
 
     // Variables declaration - do not modify     
     private javax.swing.JLabel lbDateNow;

@@ -2,6 +2,7 @@ package GUI.Component.StaffManager;
 
 import BUS.Account_BUS;
 import BUS.Staff_BUS;
+import DTO.Account_DTO;
 import GUI.Component.RoundedButton;
 import GUI.Component.RoundedTextField;
 import java.awt.BorderLayout;
@@ -254,8 +255,9 @@ public class AccountAndAuthorizationLayout extends JPanel{
         }
     }
     
-    private void btnUpdateAccountActionPerformed(ActionEvent evt) {  
-
+    private void btnUpdateAccountActionPerformed(ActionEvent evt) {
+        Account_BUS.update(new Account_DTO(tfUserName.getText(), tfPassword.getText(), ""));
+        Account_BUS.getAllAccount((DefaultTableModel) tbAccount.getModel());
     } 
    
     // Variables declaration - do not modify 

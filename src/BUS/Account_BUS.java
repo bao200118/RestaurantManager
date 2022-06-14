@@ -38,4 +38,13 @@ public class Account_BUS {
         } 
         return null;
     }
+    
+    /**
+     * Update account
+     * @param account
+     * @return A Boolean representing true if success, otherwise false
+     */
+    public static boolean update(Account_DTO account) {
+        return account_DAO.update(account);
+    }
 }
