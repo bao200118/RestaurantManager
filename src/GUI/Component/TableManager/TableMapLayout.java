@@ -32,6 +32,8 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -312,8 +314,29 @@ public class TableMapLayout extends JPanel {
         tfProvisionalAmount = new JTextField();
         JLabel lbTextUnit1 = new JLabel("Đồng");
         JLabel lbTextUnit3 = new JLabel("%");
+
         JLabel lbTextPromotion2 = new JLabel("Khuyến mãi (%)");
         tfPromotionPercentUnit = new JTextField();
+
+        tfPromotionPercentUnit.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent ke) {
+//            String value = tfPrice.getText();
+//            int l = value.length();
+                if (ke.getKeyChar() >= '0' && ke.getKeyChar() <= '9'
+                        || ke.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+                    tfPromotionPercentUnit.setEditable(true);
+                    if (ke.getKeyCode() != KeyEvent.VK_BACK_SPACE
+                            && Double.parseDouble(tfPromotionPercentUnit.getText() + ke.getKeyChar()) > 100) {
+                        tfPromotionPercentUnit.setText("100");
+                        tfPromotionPercentUnit.setEditable(false);
+                    }
+                } else {
+                    tfPromotionPercentUnit.setEditable(false);
+                }
+            }
+        });
+
         JLabel lbTextTotalPayable = new JLabel("Thành tiền:");
         lbTotalPayable = new JLabel("0.000");
         JLabel lbTextTotalPayableUnit = new JLabel("Đồng");
@@ -670,12 +693,14 @@ public class TableMapLayout extends JPanel {
     }
 
     private void tableItemMouseClicked(MouseEvent evt) {
+        tfPromotionPercentUnit.setText("");
+        tfPromotionPercentUnit.repaint();
+
         if (evt.getClickCount() == 1) {
-            tfPromotionPercentUnit.setText("");
-            tfPromotionPercentUnit.repaint();
             getInfoDinnerTable(indexTable);
             loadBillDetailByTableDinnerId(indexTable);
             selectedOrderBillId = OrderBill_BUS.getCurrentBillId(indexTable);
+
         }
         if (evt.getClickCount() == 2) {
             DinnerTable_DTO dinnerTableInfo = DinnerTable_BUS.getTableInfoByTableId(indexTable);
@@ -778,13 +803,18 @@ public class TableMapLayout extends JPanel {
     }
 
     private void tfPromotionPercentTextChangeActionPerformed(DocumentEvent evt) {
-        System.err.println(tfProvisionalAmount.getText());
 
-        double total = Double.parseDouble(tfProvisionalAmount.getText());
-        double percent
-                = Double.parseDouble(tfPromotionPercentUnit.getText()) > 100 ? 100 : Double.parseDouble(tfPromotionPercentUnit.getText());
-        lbTotalPayable.setText(Double.toString((total * (100 - percent)) / 100));
-
+        if (!tfProvisionalAmount.getText().equals("")
+                && !tfPromotionPercentUnit.getText().equals("")) {
+            double total = Double.parseDouble(tfProvisionalAmount.getText());
+            double percent;
+            if (Double.parseDouble(tfPromotionPercentUnit.getText()) > 100) {
+                percent = 100;
+            } else {
+                percent = Double.parseDouble(tfPromotionPercentUnit.getText());
+            }
+            lbTotalPayable.setText(Double.toString((total * (100 - percent)) / 100));
+        }
     }
 
     private void displayFoodChooserListLayout(boolean isDislpay) {

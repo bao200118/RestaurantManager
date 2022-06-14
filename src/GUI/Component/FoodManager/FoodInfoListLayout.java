@@ -226,7 +226,7 @@ public class FoodInfoListLayout extends JPanel{
          public void keyPressed(KeyEvent ke) {
 //            String value = tfPrice.getText();
 //            int l = value.length();
-            if (ke.getKeyChar() >= '0' && ke.getKeyChar() <= '9') {
+            if (ke.getKeyChar() >= '0' && ke.getKeyChar() <= '9' || ke.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
                tfPrice.setEditable(true);
             } else {
                tfPrice.setEditable(false);

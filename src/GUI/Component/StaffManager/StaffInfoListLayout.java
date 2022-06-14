@@ -12,6 +12,7 @@ import Interface.EventTextChange;
 import Utils.DateUtils;
 import Utils.ImageUtils;
 import com.toedter.calendar.JDateChooser;
+import com.toedter.calendar.JTextFieldDateEditor;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -25,6 +26,8 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Date;
 import javax.swing.BorderFactory;
@@ -180,6 +183,7 @@ public class StaffInfoListLayout extends JPanel {
         dtpDateOfBirth.setDate(new Date());
         dtpDateOfBirth.setPreferredSize(new Dimension((int) (bodyWidth / 3.5), 35));
         dtpDateOfBirth.setFont(new java.awt.Font("sansserif", 0, 14));
+        ((JTextFieldDateEditor) dtpDateOfBirth.getDateEditor()).setEditable(false);
         infoStaffFormLayout.add(dtpDateOfBirth, gbc);
 
         // label Chức vụ cụ thể
@@ -230,6 +234,23 @@ public class StaffInfoListLayout extends JPanel {
         tfPhoneNumber.setMargin(new java.awt.Insets(2, 10, 2, 6));
         tfPhoneNumber.setRound(20);
         tfPhoneNumber.setPreferredSize(new Dimension((int) (bodyWidth / 3.5), 35));
+
+        tfPhoneNumber.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent ke) {
+                if (ke.getKeyChar() >= '0' && ke.getKeyChar() <= '9'
+                        || ke.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+                    if (ke.getKeyCode() == KeyEvent.VK_BACK_SPACE || tfPhoneNumber.getText().length() < 10) {
+                        tfPhoneNumber.setEditable(true);
+                    } else {
+                        tfPhoneNumber.setEditable(false);
+                    }
+                } else {
+                    tfPhoneNumber.setEditable(false);
+                }
+            }
+        });
+
         infoStaffFormLayout.add(tfPhoneNumber, gbc);
 
         // label lương
@@ -255,6 +276,18 @@ public class StaffInfoListLayout extends JPanel {
         tfSalary.setMargin(new java.awt.Insets(2, 10, 2, 6));
         tfSalary.setRound(20);
         tfSalary.setPreferredSize(new Dimension((int) (bodyWidth / 3.5), 35));
+
+        tfSalary.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent ke) {
+                if (ke.getKeyChar() >= '0' && ke.getKeyChar() <= '9' || ke.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+                    tfSalary.setEditable(true);
+                } else {
+                    tfSalary.setEditable(false);
+                }
+            }
+        });
+
         infoStaffFormLayout.add(tfSalary, gbc);
 
         // label Giới tính
@@ -527,16 +560,21 @@ public class StaffInfoListLayout extends JPanel {
     }
 
     private void btnAddStaffActionPerformed(ActionEvent evt) {
-        Staff_DTO newStaff = new Staff_DTO(autoCreateNewStaffID(), tfFullName.getText(), dateUtils.formatDate(dtpDateOfBirth.getDate()), getStaffSex(), tfPhoneNumber.getText(), tfPosition.getText(), tfSalary.getText(), taAddress.getText());
 
-        Staff_BUS.addStaff(newStaff, cbPositionType.getSelectedItem().toString());
-
-        loadStaff();
-
-        if ("".equals(tfFullName.getText()) || "".equals(tfPhoneNumber.getText()) || "".equals(tfPosition.getText()) || "".equals(tfSalary.getText()) || "".equals(taAddress.getText())) {
-            // Vẫn còn thuộc tính chưa điền
+        if ("".equals(tfFullName.getText())
+                || "".equals(tfPhoneNumber.getText())
+                || "".equals(tfPosition.getText())
+                || "".equals(tfSalary.getText())
+                || "".equals(taAddress.getText())) {
+            JOptionPane.showMessageDialog(this, "Bạn chưa nhập đầy đủ thông tin", "Thông tin", JOptionPane.WARNING_MESSAGE);
+        } else if (tfPhoneNumber.getText().length() != 10) {
+            JOptionPane.showMessageDialog(this, "Số điện thoại chỉ có 10 chữ số", "Thông tin", JOptionPane.WARNING_MESSAGE);
         } else {
-            // add food to db and clear data form
+            Staff_DTO newStaff = new Staff_DTO(autoCreateNewStaffID(), tfFullName.getText(), DateUtils.formatDate(dtpDateOfBirth.getDate()), getStaffSex(), tfPhoneNumber.getText(), tfPosition.getText(), tfSalary.getText(), taAddress.getText());
+
+            Staff_BUS.addStaff(newStaff, cbPositionType.getSelectedItem().toString());
+
+            loadStaff();
             clearData();
         }
     }

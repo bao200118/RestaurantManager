@@ -105,7 +105,7 @@ public class Account_DAO implements IAccount_DAO {
         String sqlStatement = "Update NGUOIDUNG Set MatKhau = ? Where TaiKhoan = ?";
         conn = SQLiteDBExecutor.connect();
 
-        boolean isSuccess = SQLiteDBExecutor.executeNonQuery(sqlStatement, conn, account.getUsername(), account.getPassword());
+        boolean isSuccess = SQLiteDBExecutor.executeNonQuery(sqlStatement, conn, account.getPassword(), account.getUsername());
 
         SQLiteDBExecutor.closeConnection(conn);
 
